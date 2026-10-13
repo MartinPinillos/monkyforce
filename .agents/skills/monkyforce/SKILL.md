@@ -57,28 +57,30 @@ Una conversación exploratoria no crea automáticamente Cards ni branches. Para 
 
 ---
 
-# 3. Nueva feature — Jira-first
+# 3. Jira-first y creación de branches
 
-Workflow:
+Para cualquier trabajo que vaya a implementarse:
 
 ```text
 Requerimiento
      ↓
 Buscar Card Jira existente
      ↓
-Crear Feature Jira si no existe
+Crear Card Jira si no existe
      ↓
 Obtener KAN-XX real
      ↓
+Detectar sprint activo cuando corresponda
+     ↓
+Clasificar tipo de trabajo
+     ↓
 Crear branch desde main
-feat/<descripcion>-kan-XX
      ↓
-Validar contra KNOWLEDGE
+Posicionar workspace local en la branch si se va a implementar
      ↓
-Identificar BR-* / OQ-*
+Validar KNOWLEDGE / BR-* / OQ-*
      ↓
-Crear/actualizar SPEC
-spec/features/NNN-KAN-XX-<descripcion>.md
+Crear/actualizar SPEC cuando corresponda
      ↓
 PLAN + TASKS
      ↓
@@ -95,21 +97,63 @@ Actualizar ROADMAP / Jira
 Merge solo cuando esté autorizado
 ```
 
+Convención de Jira y branch:
+
+```text
+Nueva funcionalidad
+Jira: Feature
+Branch: feat/<descripcion>-kan-XX
+
+Bug
+Jira: Error
+Branch: fix/<descripcion>-kan-XX
+
+Refactor
+Jira: Tarea
+Branch: refactor/<descripcion>-kan-XX
+
+Configuración / infraestructura / mantenimiento / documentación técnica
+Jira: Tarea
+Branch: chore/<descripcion>-kan-XX
+```
+
 Reglas:
 
 - no inventar ni predecir Jira Keys;
 - el Jira Key debe provenir de Jira;
-- para nueva funcionalidad usar tipo Jira `Feature`, salvo que el usuario indique otra cosa o corresponda bug/tarea técnica;
+- usar `kebab-case` y minúsculas en branches;
+- incluir siempre `kan-XX` en la branch;
 - crear la branch desde `main`;
-- branch de feature: `feat/<descripcion>-kan-XX`;
+- elegir el prefijo por la naturaleza real del trabajo;
 - Jira Key canónico en SPEC, commits, PRs y documentación: `KAN-XX`;
-- comprobar Jira Development antes de declarar la feature cerrada;
+- comprobar Jira Development antes de declarar el trabajo cerrado;
 - no mergear automáticamente salvo autorización explícita o workflow previamente acordado.
+
+Sprint:
+
+- si el usuario pide iniciar/implementar ahora, detectar el sprint activo;
+- asignar la Card al sprint activo cuando exista y la herramienta lo permita;
+- si no hay sprint activo, dejarla en Backlog;
+- no incorporar automáticamente al sprint tareas creadas solo para planificación futura.
+
+Workspace local:
+
+- una branch creada remotamente no cambia la branch activa local;
+- si se va a implementar desde el workspace local, hacer fetch/switch según corresponda;
+- verificar la branch activa antes de modificar código;
+- no implementar mientras el workspace siga en `main`;
+- si la solicitud era solo crear/verificar Jira + branch remota sin código, no hace falta cambiar la branch local.
+
+Para nueva funcionalidad, crear la SPEC con formato:
+
+```text
+spec/features/NNN-KAN-XX-<descripcion>.md
+```
 
 Si Jira o GitHub no están disponibles/autorizados, informar exactamente qué paso quedó bloqueado y no simular la operación.
 
----
 
+# 4. SPEC
 # 4. SPEC
 
 La sección SPEC debe definir:
@@ -316,6 +360,12 @@ No afirmar que un build/test está OK si no se ejecutó.
 
 # 12. Bug
 
+Branch por defecto:
+
+```text
+fix/<descripcion>-kan-XX
+```
+
 Para corregir un bug:
 
 ```text
@@ -334,6 +384,12 @@ Evitar corregir únicamente el síntoma.
 ---
 
 # 13. Refactor
+
+Branch por defecto:
+
+```text
+refactor/<descripcion>-kan-XX
+```
 
 Un refactor:
 
