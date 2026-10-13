@@ -886,7 +886,7 @@ Estos elementos deberán utilizarse para validar y ampliar este documento.
 
 No debe utilizarse para fijar por sí solo:
 
-- versiones de .NET;
+- versiones del stack tecnológico (Node.js / NestJS / Angular);
 - estructura interna del backend;
 - ORM;
 - estrategia de acceso a Oracle;

@@ -1,7 +1,7 @@
 # MonkyForce — ROADMAP
 
-> **Estado:** Roadmap inicial  
-> **Objetivo:** Mantener visible qué está listo, qué estamos definiendo y qué viene después.
+> **Estado:** Roadmap actualizado — monorepo + Jira/GitHub  
+> **Objetivo:** Mantener visible qué está listo, qué está configurado, qué falta validar y qué viene después.
 
 ---
 
@@ -14,11 +14,10 @@ Arquitectura técnica           ✅
 Instrucciones de agentes       ✅
 Workflow Skill                 ✅
 Roadmap                        ✅
-
-Monorepo                      ✅
-Primera SPEC                   ⬜
-Backend foundation             🟡
-Frontend foundation            🟡
+Monorepo                       ✅
+Integración Jira ↔ GitHub      ✅ validada con KAN-6 / PR #1
+Foundation configurada         🟡 pendiente validación runtime completa
+Primera SPEC funcional         ⬜
 Primera feature funcional      ⬜
 ```
 
@@ -33,42 +32,73 @@ Primera feature funcional      ⬜
 - [x] `AGENTS.md`
 - [x] `.agents/skills/monkyforce/SKILL.md`
 - [x] `ROADMAP.md`
+- [x] `README.md`
+- [x] Convención Jira-first
+- [x] Convención de branch `feat/<descripcion>-kan-XX`
+- [x] Integración GitHub for Atlassian validada
 
 ---
 
-# 3. Foundation — siguiente etapa
+# 3. Foundation — estado actual
 
-Antes de desarrollar procesos productivos:
+Ya existe en el starter:
 
-- [x] Crear repositorio único `monkyforce`
-- [x] Definir estructura `backend/` + `frontend/`
-- [x] Centralizar documentación/configuración global en la raíz
-- [x] Configurar npm workspaces
-- [ ] Inicializar NestJS
-- [ ] Inicializar Angular
-- [ ] Fijar versiones Node / NestJS / Angular
-- [ ] Configurar TypeScript estricto
-- [ ] Configurar lint/format
-- [ ] Crear `.env.example`
-- [ ] Configurar Docker Compose
-- [ ] Levantar Oracle local
-- [ ] Configurar TypeORM
-- [ ] Validar conexión Oracle
-- [ ] Configurar Swagger/OpenAPI
-- [ ] Configurar manejo global de errores
-- [ ] Configurar logging/correlation ID
-- [ ] Configurar Vitest backend
-- [ ] Configurar Vitest frontend
-- [ ] Configurar Supertest
-- [ ] Configurar Playwright
-- [ ] Configurar builds iniciales
+- [x] Repositorio único `MartinPinillos/monkyforce`
+- [x] Estructura `backend/` + `frontend/`
+- [x] Documentación/configuración global en la raíz
+- [x] npm workspaces
+- [x] NestJS inicializado
+- [x] Angular inicializado
+- [x] Versiones base fijadas (`.nvmrc` y `package.json`)
+- [x] TypeScript estricto backend/frontend
+- [x] Prettier global
+- [x] Lint backend con Oxlint
+- [ ] Definir/configurar lint frontend si se considera necesario
+- [x] `.env.example` raíz y backend
+- [x] Docker Compose para Oracle
+- [x] TypeORM configurado
+- [x] Swagger/OpenAPI configurado
+- [x] ValidationPipe global
+- [x] Manejo global de errores base
+- [x] Correlation ID base
+- [ ] Completar estrategia de logging estructurado
+- [x] Vitest backend
+- [x] Vitest frontend
+- [x] Supertest
+- [x] Playwright
+
+Pendiente de validación real en entorno local:
+
+- [ ] Ejecutar `npm install`
+- [ ] Levantar Oracle con `npm run db:up`
+- [ ] Validar creación/configuración del usuario Oracle de aplicación
+- [ ] Validar conexión NestJS → Oracle
+- [ ] Ejecutar build backend
+- [ ] Ejecutar build frontend
+- [ ] Ejecutar unit tests
+- [ ] Ejecutar integration tests aplicables
+- [ ] Ejecutar smoke/E2E base
+
+No marcar estos puntos como completos únicamente porque exista la configuración en el repositorio.
 
 ---
 
-# 4. Primera SPEC recomendada
+# 4. Primera feature recomendada — Auth / RBAC
+
+La primera feature funcional propuesta sigue siendo Auth / RBAC, pero el orden obligatorio es Jira-first.
 
 ```text
-001-KAN-XX-auth-rbac.md
+Crear Feature Jira: Auth / RBAC
+        ↓
+Jira devuelve KAN-XX real
+        ↓
+Crear branch desde main
+feat/auth-rbac-kan-xx
+        ↓
+Crear SPEC
+spec/features/001-KAN-XX-auth-rbac.md
+        ↓
+Implementar
 ```
 
 Alcance esperado:
@@ -76,10 +106,10 @@ Alcance esperado:
 - usuarios;
 - login;
 - JWT;
-- Set-Cookie;
-- HttpOnly;
-- Secure;
-- SameSite=Lax;
+- `Set-Cookie`;
+- `HttpOnly`;
+- `Secure`;
+- `SameSite=Lax`;
 - roles;
 - permisos;
 - guards;
@@ -117,6 +147,8 @@ El orden es preliminar y puede cambiar después del relevamiento.
 017 Métricas y estadísticas
 018 Integraciones
 ```
+
+El número interno `NNN` no reemplaza al Jira Key. Cada feature real deberá utilizar su `KAN-XX` asignado por Jira.
 
 ---
 
@@ -163,16 +195,17 @@ Consultar `KNOWLEDGE.md` para `OQ-*`.
 
 # 8. Decisiones técnicas todavía pendientes
 
-- [ ] Versión exacta de Oracle
+- [ ] Versión exacta/objetivo de Oracle para ambientes del proyecto
 - [ ] UI Library
 - [ ] Estrategia completa de refresh token
 - [ ] Implementación CSRF
-- [ ] Estrategia migrations ambientes superiores
+- [ ] Estrategia de migrations en ambientes superiores
 - [ ] Hosting
 - [ ] Reverse proxy
 - [ ] Modelo físico de auditoría
+- [ ] Estrategia completa de logging estructurado
 
-Estas decisiones deben resolverse cuando la feature o infraestructura correspondiente las necesite.
+Las versiones base de Node/NestJS/Angular ya quedaron fijadas en el starter; si cambian, `.nvmrc` y `package.json` son la fuente técnica canónica.
 
 ---
 
@@ -183,7 +216,7 @@ No iniciar varias features funcionales en paralelo sin necesidad.
 Preferencia:
 
 ```text
-Foundation
+Validar foundation local
     ↓
 Auth/RBAC
     ↓
@@ -195,11 +228,13 @@ Iteraciones verticales completas
 Cada iteración debe intentar incluir:
 
 ```text
+Jira + SPEC
 DB
 Backend
 Frontend
 Tests
-E2E
+E2E crítico
+PR + Jira Development
 ```
 
 en lugar de construir todas las tablas primero, luego todo el backend y finalmente todo el frontend.
@@ -210,8 +245,8 @@ en lugar de construir todas las tablas primero, luego todo el backend y finalmen
 
 **Próxima tarea recomendada:**
 
-> Crear `spec/features/001-KAN-XX-auth-rbac.md`.
+> Validar el foundation del starter en entorno local ejecutando instalación, Oracle, conexión, builds y tests base.
 
-Después:
+Una vez validado el foundation:
 
-> crear primero la Feature correspondiente en Jira, obtener `KAN-XX` y continuar la implementación dentro del monorepo.
+> Crear la Feature Jira de Auth / RBAC, obtener el `KAN-XX` real, crear la branch `feat/auth-rbac-kan-xx` y recién entonces crear `spec/features/001-KAN-XX-auth-rbac.md`.

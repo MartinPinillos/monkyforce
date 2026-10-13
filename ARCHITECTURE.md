@@ -1,6 +1,6 @@
 # MonkyForce — ARCHITECTURE
 
-> **Estado:** Propuesta v3 — monorepo  
+> **Estado:** Base v4 — monorepo + Jira/GitHub  
 > **Objetivo:** Definir la arquitectura técnica base de MonkyForce.  
 > **Fuente funcional:** `KNOWLEDGE.md`  
 > Este documento define **cómo se construirá técnicamente MonkyForce**.  
@@ -114,6 +114,16 @@ Supertest
 ```
 
 NestJS será el framework principal del backend.
+
+Versiones base actualmente fijadas por el starter:
+
+```text
+Node.js 24.21.0
+NestJS 12.1.2
+Angular 22.2.2
+```
+
+La fuente canónica de las versiones ejecutables es `.nvmrc` y los `package.json` del monorepo. Si se actualizan dependencias, estos archivos prevalecen y la documentación debe mantenerse alineada.
 
 ---
 
@@ -1453,6 +1463,8 @@ Una feature importante no estará terminada únicamente porque compile.
 Debe cumplir, según corresponda:
 
 ```text
+Card Jira real asociada
+SPEC implementada
 Implementación
 Unit Tests
 Integration Tests
@@ -1462,9 +1474,14 @@ Backend build
 Frontend build
 Acceptance Criteria
 Documentación
+Branch / commits / PR trazables por Jira Key
+Jira Development refleja la actividad de GitHub
+PR mergeado si la feature se declara cerrada
 ```
 
 La SPEC indicará qué niveles de test aplican.
+
+La trazabilidad Jira/GitHub se rige por `AGENTS.md`. El agente no debe declarar una feature cerrada si la vinculación o el estado final no fueron verificados cuando correspondan.
 
 ---
 
@@ -1632,15 +1649,26 @@ Context7
 
 # 59. SDD
 
-El desarrollo seguirá Specification-Driven Development.
+El desarrollo seguirá Specification-Driven Development con trazabilidad Jira-first.
 
 Cada feature tendrá un único archivo:
 
 ```text
-spec/features/NNN-feature.md
+spec/features/NNN-KAN-XX-feature.md
 ```
 
-Con:
+Ejemplo:
+
+```text
+spec/features/003-KAN-25-abm-rollos.md
+```
+
+Donde:
+
+- `NNN` representa el orden interno de las SPECs;
+- `KAN-XX` es el Jira Key real de la feature y no debe inventarse ni predecirse.
+
+Cada archivo contiene:
 
 ```text
 1. SPEC
@@ -1648,25 +1676,36 @@ Con:
 3. TASKS
 ```
 
-Flujo:
+Flujo general:
 
 ```text
-Requerimiento
+Requerimiento / necesidad
      ↓
-KNOWLEDGE.md
+Crear o identificar Card Jira
      ↓
-Feature SPEC
+Obtener KAN-XX real
      ↓
-Plan
+Crear branch desde main
+feat/<descripcion>-kan-XX
      ↓
-Tasks
+Validar KNOWLEDGE / BR-* / OQ-*
+     ↓
+Crear o actualizar Feature SPEC
+     ↓
+PLAN + TASKS
      ↓
 Implementación
      ↓
-Tests
+Tests + Builds
      ↓
-Acceptance Criteria
+Pull Request [KAN-XX]
+     ↓
+Verificar Jira Development
+     ↓
+Merge cuando esté autorizado
 ```
+
+`AGENTS.md` es la fuente canónica para el workflow operativo Jira/GitHub de los agentes.
 
 ---
 
@@ -1720,16 +1759,23 @@ Antes de implementar una feature:
 1. leer `AGENTS.md`;
 2. consultar `KNOWLEDGE.md`;
 3. consultar `ARCHITECTURE.md`;
-4. identificar la feature activa;
-5. revisar la SPEC;
-6. inspeccionar código existente;
-7. revisar preguntas abiertas;
-8. no inventar reglas;
-9. implementar;
-10. agregar tests;
-11. ejecutar build;
-12. ejecutar tests;
-13. validar criterios de aceptación.
+4. crear o identificar la Card Jira real;
+5. obtener el Jira Key real;
+6. crear la branch desde `main` con la convención definida en `AGENTS.md`;
+7. crear o revisar la SPEC asociada al mismo Jira Key;
+8. inspeccionar el código existente en `backend/` y/o `frontend/`;
+9. revisar reglas `BR-*` y preguntas abiertas `OQ-*`;
+10. no inventar reglas funcionales ni identificadores Jira;
+11. implementar;
+12. agregar tests;
+13. ejecutar builds y tests aplicables;
+14. validar criterios de aceptación;
+15. crear o actualizar el Pull Request con el Jira Key;
+16. verificar la vinculación en Jira Development;
+17. actualizar TASKS, Jira y ROADMAP cuando corresponda;
+18. mergear únicamente cuando exista autorización según `AGENTS.md`.
+
+Las conversaciones exploratorias no deben crear Cards ni branches salvo pedido explícito del usuario.
 
 ---
 
@@ -1784,6 +1830,10 @@ No utilizar sin una necesidad concreta:
 | AD-028 | Context7 como documentación técnica para agentes |
 | AD-029 | Configuración y documentación compartida vivirán en la raíz del monorepo |
 | AD-030 | La raíz utilizará npm workspaces para operar backend y frontend |
+| AD-031 | El workflow de features será Jira-first: Card real → Jira Key → branch → SPEC → implementación → PR |
+| AD-032 | Las branches de features usarán `feat/<descripcion>-kan-XX`; el Jira Key canónico se mantiene como `KAN-XX` en documentación, commits y PRs |
+| AD-033 | Jira Development + GitHub for Atlassian se utilizarán para trazabilidad de branch/PR |
+| AD-034 | Las versiones base del starter quedaron fijadas en `.nvmrc` y `package.json`; actualmente Node.js 24.21.0, NestJS 12.1.2 y Angular 22.2.2 |
 
 ---
 
@@ -1793,9 +1843,6 @@ No utilizar sin una necesidad concreta:
 
 Confirmar versión de producción/desarrollo objetivo.
 
-## AP-002 — Versiones exactas NestJS / Node / Angular
-
-Fijarlas al inicializar el monorepo, verificando compatibilidad.
 
 ## AP-003 — UI Library
 
