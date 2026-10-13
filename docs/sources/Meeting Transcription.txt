@@ -1,0 +1,301 @@
+# Meeting Transcription
+
+  Meeting started: 22/9/2026, 1:00:58 p.m.
+  Duration: 43 minutes
+  Participants: Martin Pinillos, Nahuel Sam Sam
+
+  [View original transcript](https://app.tactiq.io/api/2/u/m/r/wl6BAuRPffb4hFoYF6Px?o=txt)
+
+    ## Detailed summary
+
+## Overview
+Martin y Nahuel conversaron el 22 de septiembre de 2026 sobre las funcionalidades, problemas y prioridades de un sistema de gestión de producción textil que actualmente combina una aplicación inestable y múltiples planillas Excel; acordaron definir un alcance mínimo entregable para febrero y recopilar accesos/Excel de ejemplo para avanzar en el análisis.
+
+## Resumen detallado
+
+- Objetivo principal tratado
+  - Diseñar/mejorar un sistema que permita medir y controlar el uso de telas por rollo y estimar consumo por prenda (remeras, pantalones, shorts, etc.), integrando tizadas, stock de rollos, cortes, programación, control de producción, control de calidad y envíos.
+
+- Módulos y funcionalidades descritas como necesarias
+  - Gestión de tizadas (patrones/piezas)
+    - Debe permitir seleccionar pisadas, cantidad de copias y asociarse al tipo de prenda.
+    - Las tizadas se usan para calcular cuántas prendas salen por corte.
+  - Gestión de rollos / stock de telas
+    - Carga de rollos con peso (kg), largo aproximado (m) y ancho (obligatorio).
+    - Al asociar rollos a un corte, el sistema debe descontar stock real y permitir editar cantidades reales (ej. sistema sugiere 15 capas, pero se hicieron 14).
+    - Historial de rollos usados y stock real.
+  - Configuración de tipos de tela y prendas
+    - Registrar telas, unidades de medida (metro/kilo), anchos, colores y variantes.
+    - Registrar prendas compuestas por varias telas (principal + secundarias) y fichas de composición (especificaciones técnicas, estampados, piezas).
+  - Módulo de cortes y programación
+    - Crear cortes con responsable, tipo de prenda, tipo de tela, bloques de confección (capas), cronograma y asignación de rollos disponibles.
+    - Posibilidad de editar bloques y multiplicidad.
+  - Control de producción y control de calidad
+    - Registrar entregas parciales y finales desde talleres y estampadores.
+    - Registrar prendas buenas y fallas unitarias con detalle (ej.: talle, tipo de falla) y permitir marcar arreglada / no arreglada / enviada al taller.
+    - Soporte para "guardado parcial" que bloquee valores entregados (editable solo por administradores).
+    - Registro de mermas (prendas y telas no recuperables).
+  - Gestión de insumos y componentes (avíos)
+    - Control de elementos comprados a proveedores: elásticos, cierres, etiquetas, botones, etc., con stock mínimo y movimientos por producción.
+    - Cálculo estimativo automático de consumo de insumos por orden (ej.: metros de elástico por talle/cantidad).
+  - Historiales, métricas y estadísticas
+    - Generar reportes de metros de tela usados, cortes realizados, costos históricos por producto (ej.: precio de producción en mayo vs ahora), y métricas requeridas para tesis/probabilidades.
+  - Envíos / logística (viajes de cadetería)
+    - Registro de viajes con fecha, taller origen/destino, acción (retirar/llevar), responsable, dirección, teléfono, horario, observaciones y tipo de jornada (completo/media) para viáticos.
+  - Roles y permisos de usuario
+    - Diferentes niveles de acceso (ej.: responsables de corte, administradores, visualizadores) para controlar quién puede editar qué.
+  - Integraciones
+    - Conexión (o al menos compatibilidad) con el sistema de facturación/tienda (actualmente Tienda Nube) para control de stock de venta, y enlace con el módulo de estampado y talleres externos.
+  - Interfaz y usabilidad
+    - Registro histórico y visualización clara por taller (colores para identificar envíos), posibilidad de cargar remitos y comparar lo enviado vs. lo recibido.
+
+- Problemas actuales y limitaciones del sistema vigente
+  - El módulo de stock en la aplicación anterior fue eliminado por hacerlo lento/pesado.
+  - Las planillas Excel son múltiples y fragmentadas: control de cortes, control de producción, stock de rollos, maestro de envíos, hoja por taller; gran parte del flujo se realiza manualmente.
+  - Falta de automatización en el cálculo de insumos (actualmente formulas en Excel que se pierden al migrar).
+  - El sistema actual no maneja bien entregas parciales ni estados intermedios (necesidad de guardado parcial).
+  - Falta de trazabilidad en algunos procesos: estampado como proceso separado (entregas parciales) y registro de envíos.
+  - El sistema tiene partes desarrolladas pero fragmentadas y sin acceso directo al código; se ofreció acceso con usuario de solo lectura para revisar funcionamiento.
+
+- Requisitos operativos y datos adicionales mencionados
+  - Necesidad de mantener un "Excel maestro" que Nahuel usa para conciliar lo que se envía a taller vs lo que el taller remite (incluye taller, tipo de tela, número de corte, fecha).
+  - Registro de talleres por hoja y codificación por color para rastreo (ej.: Percy, Mario, Janeth, Jacinto, 14 de septiembre).
+  - Control de calidad en tres puntos: llegada del taller, salida a estampado y regreso del estampado.
+  - Registro de viajes y cadetería a cargo de Santiago con hoja que indica días de media jornada (color verde).
+  - Plazo orientativo: Gastón (dueño) necesita una presentación para tesis con fecha límite "febrero" — se sugiere priorizar un MVP funcional antes de esa fecha y dejar módulos secundarios para iteraciones posteriores.
+
+- Acuerdos y próximos pasos
+  - Martin propone:
+    - Hacer un análisis funcional y decidir alcance mínimo entregable en el tiempo disponible.
+    - Entregar algo básico y útil que pueda reemplazar parte del Excel y del sistema actual, luego iterar.
+  - Nahuel se compromete a:
+    - Facilitar accesos de usuario (solo lectura) al sistema actual para que el equipo lo revise.
+    - Compartir las planillas Excel usadas (pueden contener datos ficticios para proteger información sensible).
+    - Proveer información adicional sobre fórmulas/calculadores de insumos y ejemplos de flujos parciales (estampado, remitos).
+  - Ambos acordaron que:
+    - Es inviable cubrir todo el alcance inicial antes de febrero; priorizar funciones críticas (cálculos de tela/rollo, tizadas, stock básico, control de producción y manejo de entregas parciales).
+    - Coordinar reuniones posteriores con Gastón para definir estadísticas y requerimientos de costos/tiempos más avanzados.
+
+- Puntos de atención y recomendaciones implícitas para el análisis técnico
+  - Priorizar la inclusión de ancho del rollo y unidad de medida para cálculos correctos.
+  - Incluir auditoría/historial por registro y bloqueo de entregas parciales con permisos administrativos.
+  - Mantener la capacidad de registrar y relacionar insumos comprados y su consumo por orden.
+  - Diseñar roles/privilegios desde el inicio para evitar que talleres editen información crítica.
+  - Considerar performance: evitar modelos que vuelvan la app lenta (problema experimentado con stock en la versión previa).
+  - Preparar importadores de Excel y/o APIs para migrar datos actuales sin pérdida de fórmulas críticas (o replicar las fórmulas en el backend).
+
+## Elementos que Nahuel entregará para avanzar
+- Acceso de usuario (solo lectura) al sistema actual.
+- Las planillas Excel principales (control de cortes, control de producción, stock de rollos, maestro de envíos) con datos de ejemplo si es necesario.
+- Descripción o copia de los calculadores de insumos (fórmulas que usan para elásticos, puños, etc.).
+
+## Próxima acción propuesta por Martin
+- Martin realizará el análisis de requerimientos con la información recibida, definirá un alcance mínimo viable para entregar antes de febrero y propondrá un plan de trabajo (módulos y priorización).
+## Summary and Action items
+
+Resumen breve:
+Participantes: Martin Pinillos y Nahuel Sam Sam. Discutieron los requerimientos y funcionalidades de un sistema para controlar cortes, stock de rollos y producción (tizadas, tipos de tela, fichas de producto, control de calidad y envíos), además del uso actual de múltiples Excel y la necesidad de priorizar módulos para un entregable parcial antes de febrero.
+
+Tareas asignadas:
+- [ ] Martin Pinillos: Revisar todo lo comentado en la reunión y definir qué módulos pueden entregarse dentro del plazo (febrero), luego comunicar propuesta de alcance inicial.
+- [ ] Martin Pinillos: Solicitar y recibir acceso de solo consulta al sistema actual (usuario con permisos limitados) para evaluar funcionamiento sin modificar datos.
+- [ ] Martin Pinillos: Pedir a Nahuel los archivos Excel usados (pueden ser con datos ficticios) para comprender formatos y fórmulas y preparar la propuesta técnica.
+- [ ] Nahuel Sam Sam: Proveer los Excel mencionados (control de cortes, control de producción, stock de rollos, maestro de envíos y calculadores de insumos) con datos reales o de ejemplo.
+- [ ] Nahuel Sam Sam: Crear y compartir un usuario de solo consulta para el sistema actual (si es posible) y coordinar el alcance de la información que puede visualizarse.
+- [ ] Nahuel Sam Sam: Compartir ejemplos o documentación sobre los procesos de envío/cadetería, control de calidad (incluyendo etapas de estampado) y reglas de mermas/proveedores para incorporar en el análisis.
+- [ ] Ambos (Martin y Nahuel): Coordinar una próxima reunión con Gastón (dueño) y otros responsables para definir prioridades, permisos de usuario y métricas necesarias; programar la llamada cuando Martin tenga la propuesta inicial.
+
+
+
+
+    ## Highlights
+
+    > 43:49 Nahuel Sam Sam: Gastón el dueño que él va a tener muchas más cosas para decir aportar.
+
+  ## Transcript
+
+  00:00 Martin Pinillos: Hola hola hola hola hola hola.
+04:27 Nahuel Sam Sam: Hola Martín Cómo estás Todo bien todo tranquilo.
+04:29 Martin Pinillos: Bien, vos. Ahí ya los chicos se van a sumar.
+04:39 Nahuel Sam Sam: bueno
+04:42 Martin Pinillos: Qué tal la jornada tranqui?
+04:44 Nahuel Sam Sam: De comer acá estoy con Matías me encargó.
+04:49 Martin Pinillos: Qué hace Matías todo bien. con gusto
+04:53 Nahuel Sam Sam: Justo cortamos algunas de comer Así que nos agarraron ahí.
+04:59 Martin Pinillos: Che está bien Sí eso todavía este todavía no comí, pero tipo dos por ahí.
+05:08 Nahuel Sam Sam: Como temprano ya a las 2:30. quién falta que se sume de Martín
+05:16 Martin Pinillos: Sí, no, sí tal cual, no, yo por ahí bueno como como por mi modo de jornada por ahí puedo salir a la hora que pueda este más o menos sí que no tenga nada nada pendiente nada raro. Trabajo tres días, la semana es home Office y dos días Voy a la oficina, pero por lo general sí, tipo, una dos viste uno elige salí del Mozart si no por ahí te clavan una amiga a las tres y dar está complicada.
+05:57 Martin Pinillos: Nico y Juan pero
+06:00 Nahuel Sam Sam: avanza todo
+06:01 Martin Pinillos: Pero de igual manera yo ahí puse el Tactiq ❤️ que es como un es como un agente que va recopilando todo el texto de lo que vamos hablando entonces eso no va a
+06:11 Nahuel Sam Sam: Ah el
+06:15 Martin Pinillos: servir para después qué sé yo armar mejor la documentación. Si se nos escapa algo queda digamos ahí el documento Así que eso lo van a poder ver, así que si les parece ustedes calculo que bueno también tardó un poco con el tiempo ajustado Así que si quieren arrancamos.
+06:39 Nahuel Sam Sam: Bueno, arranquemos entre nosotros entonces.
+06:44 Martin Pinillos: Bien, bueno este. Coméntenme si puede ser por más que vos nahuel, me hayas dicho de qué se trata el proyecto Pero bueno Estaría bueno, refrescarlo, que es digamos lo que se necesita, cuál sería, digamos bueno. Sí, sí. Sí sí, el fin del proyecto que básicamente lo que vos habías comentado la idea era poder medir la cantidad de telas de los rollos que utilizan para confeccionar ropa y en base a eso sacar cuál sería el estimado por prenda que podrías, sería digamos, no Una prenda, sino varios tipos de prendas, verdad qué sé yo remera pantalones.
+07:36 Nahuel Sam Sam: Sí ahora Matías te va a explicar bien bien. Digamos que lo que me tiro el muerto yo les expliqué a los chicos ya sabemos en el contexto, pero bien bien como funciona el sistema y qué es lo que quiere gastando. primero
+07:57 Martin Pinillos: Es más si va a estar el celu, verdad desde la compu pueden tener?
+08:03 Nahuel Sam Sam: Trabajo para voltear esto siempre la computadora esto no tiene audio ni audio,
+08:07 Martin Pinillos: Mil no tienen nada más.
+08:09 Nahuel Sam Sam: ni micrófono, este es el sistema que utilizamos actualmente está enfocando vos está desenfocado.
+08:15 Martin Pinillos: está desenfocado capaz que quitan el filtro Viste Ese
+08:20 Nahuel Sam Sam: Este es el sistema que está utilizando actualmente para los cortes acá
+08:23 Martin Pinillos: Del, o sea, veo, pero se ve borroso, debe ser por el filtro viste del difuminado. perfecto
+08:41 Nahuel Sam Sam: también no la producción que tienen que hacer los chicos el cronograma. Y cuando le das a editar acá te deja cargar los rollos, el tipo de prenda. el tipo de tela a utilizar y acá le puedes ir agregando más rosas, cuando vas a crear un nuevo corte, te sale lo mismo o Dan por acá el camión y después tenga cargar cada Rosa blancas y así Acá abajo, tenéis la sala la sala de especificaciones en la que pones no sé por ejemplo, se necesita necesito solo talle XL y L y los chicos tienen que cortar todo en esas tallas tiene una parte introducida acá en la que lo hicieron en la programación en el que se agregan las tizadas que son los papeles cables, digamos que es donde se basa para hacer la prenda.
+09:39 Nahuel Sam Sam: Esto es una tizada. El sistema debería tener en cuenta estastizadas para hacer los cálculos de prendas que te salen al momento de calcular el corte. Acá, por ejemplo la nueva 19 Buscamos un corte. Ponemos el responsable tiene que tener un responsable el tipo de prenda confeccionar acorde a la tela es también el tipo de del tipo de prenda que se puede confeccionar acá. Buscamos pusimos modal solamente tenemos opción la táctil o una musculatura.
+10:14 Nahuel Sam Sam: Acá agregamos rollos por dos acá tenés que agregar los kilogramos, 21 kilogramos, pesa aproximadamente larga Dos metros que se utilizan para hacer. Y abajo te da por bloques de confección Cuántas capas tienen que hacer el personal que se encarga de encimar para cortar las prendas lo que uno tenés especificado siempre el talle s y XL en el bloque 2 mxl y en el bloque 3 l están así a propósito, Porque necesitamos siempre más cantidades de determinados productos este, por ejemplo tiene una composición de repetición de tres punto cinco este de dos y este.
+10:57 Nahuel Sam Sam: Para que tenga menos cantidad del este y el doble XL que son las prendas que menos se venden intermedias del m y del XL y muchas de ellas este número, por ejemplo, el 8, el 15, el 9 son las veces, digamos de que se transite digamos la la mesa y se deja toda la telas que tienen que encimarlas para los chicos, los entre más veces ponen las capas más productos salen entre menos así como te decía la curva de tallas.
+11:25 Martin Pinillos: Bien.
+11:25 Nahuel Sam Sam: Acá tenés la tizada utilizar que es de donde la que te mostré anteriormente tenés acá para seleccionar las pisadas y la cantidad de copias a utilizar en este caso uno tiza de Tactiq ❤️. Una vez que le das a aceptar el corte. Después lo borro. igual Me falta un paso Esto es lo que te larga el sistema automáticamente el negro está lo que te larga el sistema automáticamente a través de los cálculos de medición de tela por kilogramo y peso porque logramos y metro abajo es el stock Real de lo que salió ponen los chicos empiezan a encimar y no te da poner, lo puedes editar a 14 en vez del bloque 2 como te dice el sistema según los cálculos según el sistema te da 15, pero a mí me salieron 14 Esto sí es bueno que lo carguen porque en los cálculos de medición nunca son exactos y siempre varía nunca.
+12:26 Nahuel Sam Sam: Exactamente como el sistema. Eso es en la parte de cortes también necesitamos que tenga un stock de donde Ah me lo borraron este sistema tenía un stock de telas en el que vos cargabas todos los rollos por medida y peso y te quedaba Ya listo para cargarla la parte cronograma cuando creamos un corte. Dos acá te salían color y te salían las opciones de los rollos disponibles, podías cargar todos los rollos que tenías con su depectivo pesaje, eso estaba bueno, pero bueno, el sistema este estaba andando muy mal Así que lo sacaron porque lo volvía pesado y lento.
+13:14 Nahuel Sam Sam: Después es necesario que te queden una historia porque en el historial tenés nunca sacas los cálculos y estadísticas de los productos que vos vas confeccionando acá se calculó, se debe haber generado el del short que dice que andás a ver 31 39. Nunca se cargó, me sirve. El corte completo que ya se realizó y tenés la opción de enviarlo al taller. ojo cargar los datos del taller manda y el día que se manda después Acá puedes editar los bloques esto ya en la parte de programación podés editar los bloques como están compuestos la multiplicidad.
+14:12 Nahuel Sam Sam: La acá cargas los tipos de Telas el nombre Cómo se mide si es en metro en kilos el ancho Sí o sí del rollo tiene que estar porque es en función de lo que se después se hace la tizada. Cada rollo teóricamente deberían tener la misma medición de ancho Pero bueno, no siempre pasa y después te quedan así se te queda la tela ya cargada en el sistema en lista para funcionar y todas las variantes de colores sin esto el resto del sistema no funcionaría porque no puedes cargar cortes ni nada, si no tenés la tela ya predeterminada.
+14:52 Nahuel Sam Sam: Esto tenía este es el normal y bueno, el del stock lo sacaron después tenés que cargar el tipo de prendas que tenés que confeccionar que eso es va de la mano con la con las pisadas porque cargas la tizada cargas el tipo de producto confeccionar. Que tenés también el tipo de Telas y después puedes buscarlo por nombre o ver si Acá tienes arriba para generar un nuevo producto, no aprendas.
+15:20 Nahuel Sam Sam: Nombre todo y si tiene porque tienes prendas que son compuestas por distintas telas un short puede tener lycra y microfibra ya que puede tener una calza o red en el caso de los bolsillos. Hay que cargarle a cada prenda, se le tiene que cargar su su tela, pero es una tela principal que es la que compone la mayoría del producto y después tener
+15:41 Martin Pinillos: Muy bien.
+15:42 Nahuel Sam Sam: la opción secundarias. todo eso se tiene que cargar al momento tiene que tener la opción de cargado Al momento de generar el Aprendo encargado de elastizadas con sus respectivos stock y conteo. Ahí tenés los cortes que tienes disponibles para hacer Y esto es para reponer o editar. Después las fichas de composición Esto está bueno Eso sí tiene que estar Sí o sí, por las fichas de composición vos ves cómo está compuesta la tizada Y si faltó alguna una pieza de la de la prenda agregar en dicha tizada acá tenés la ficha del producto de cómo Debería ser todas las partes del producto de cómo deberían ser a ver fecha de composición, por ejemplo.
+16:31 Nahuel Sam Sam: Mira acá tenés todas las especificaciones técnicas Cómo quedarían los estampados y después tenés las piezas de cada producto? Esto se usa como chequeo por si la tiza tiene o no todas las partes que ha pasado que una tizada le falte una parte colocada. Bueno después tenés las métricas
+16:51 Martin Pinillos: claro
+16:54 Nahuel Sam Sam: Esta parte son mucho no la entiendo porque no me encargo de esto encargado la diseñadora. Pero por lo que tengo entendido Y veo son estadísticas de las prendas que se hicieron de los metros de Telas que se utilizaron los cortes que Se realizaron en el mes toda medida que los chicos van cargando se van generando esta parte de estadísticas. Y después en la configuración general de la aplicación.
+17:21 Nahuel Sam Sam: Esto está hecho todo con Inteligencia artificial Así que anda Mari
+17:25 Martin Pinillos: Claro, bien, o sea que básicamente en lo que ustedes digamos necesitan es como
+17:26 Nahuel Sam Sam: todo hecho
+17:34 Martin Pinillos: confección de productos, o sea, vos ahí por lo que veo tenés configuración de tizada carga de stock de telas de tipo de tela configuración de tizada Y ustedes los que cargan, o sea, vos cargas la orden, de qué de una pisada, o sea, de una actividad específica y después cargas la orden de un producto para confeccionar en base satizadas.
+18:05 Nahuel Sam Sam: Bien, Esto es una parte minúscula de todo el sistema que necesitamos.
+18:08 Martin Pinillos: Bien, No no, sí sí sí. Bien este.
+18:14 Nahuel Sam Sam: Claro, lo que yo te había explicado Martín del tema de los envíos, eso no está acá en el sistema. Él lo maneja mediante un Excel que es externa de Martín tiene varias varios Excel abierto que vayan esos traslados. Yo te expliqué antes, yo tengo una una un documento de Excel con hojas por taller.
+18:26 Martin Pinillos: sí Eso Perdón me lo querés, me lo puedo explicar de vuelta al tema de los de Cómo es el envío y el traslado, cómo lo cómo lo arman?
+18:42 Nahuel Sam Sam: Yo le expliqué así por qué recordás que te explico nahuel.
+18:42 Martin Pinillos: y si me podemos Mostrar el Excel No, no, la verdad que muy muy poco muy poco me gustaría si me lo pueden sicilar si puede ser si no es complicado Explícamelo de vuelta, así también queda queda registro de eso.
+19:03 Nahuel Sam Sam: Bien, como dice el tema de control de cortes, anda, mal. Nosotros aparte. Tenemos todo registrado por Excel tenemos un Excel de control de cortes, un Excel de control de producción en el que está todo lo que no está en el control de corte control y otro con un stock de rollos. Del stock de rollos se descuentan los rollos que se utilizan en el control de corte? En el control de corte se carta se carga se carga.
+19:28 Martin Pinillos: Bien.
+19:33 Nahuel Sam Sam: todo lo que se cortó para determinados productos Este es mi Excel maestro Por así decirlo en el que tengo todo este es el corte que se mandó confeccionar que coincidente con el que se cortó, yo copio pongo el nombre de taller el tipo de tela, el número de corte y la fecha que lo mandó. Al lado acá se carga lo que el taller dice que manda si coincide o no, el remito lo carga acá carga todo lo que manda y nosotros acá cargamos todo lo que se controló toda la prenda que se controla.
+20:27 Nahuel Sam Sam: En este en este puntualmente en el principio faltan cosas agregar acá, que yo no las agrego, por ejemplo, acá se mandan avíos que pueden llegar a faltar elásticos, cierre, cordones etiquetas este cálculo en el otro sistema de corte no está, pero estos a mí me facilitaría mucho que sí lo tenga porque acá lo tengo con fórmulas, pero los intentos de sistema que me han hecho esto me lo eliminan y yo tengo que andar calculando manualmente, cuántas necesito Tengo 15 colores Acá tengo que andar sumando uno por uno cada color Para saber cuántas etiquetas tengo de composición detalle eso es que porque por ejemplo vos tenés prenda de color negro y lleva una etiqueta de color blanco, por ejemplo, el logo Entonces él tiene que andarse pagando el logo blanco, luego negro ejemplo no Eso es en otra Eso es en otra parte. Esto es la parte Ah bueno las etiquetas
+21:11 Martin Pinillos: perdón
+21:13 Nahuel Sam Sam: bueno.
+21:14 Martin Pinillos: una consulta este Excel digamos es de armado de lo que vos necesitás de de elementos para confeccionar este un producto
+21:27 Nahuel Sam Sam: Claro, faltarían algunas cosas, pero en crudo está el Ramito que yo le mando a los talleres para que confeccionen.
+21:36 Martin Pinillos: Para los padres Okay Ah perfecto bien, entonces vos le armas eso ese pedido y
+21:43 Nahuel Sam Sam: acá
+21:44 Martin Pinillos: los talleres digamos de confeccionan todo lo que necesitas vos en base a esto.
+21:48 Nahuel Sam Sam: Claro, acá falta algo que se tiene que poner que se le manda Sí o sí, a todos los talleres y es muestra una muestra de Bueno después acá ellos controlan y en base a lo que confeccionan nos responden el remito con lo que confeccionaron nosotros a ese remito se lo controlamos. y generamos esto que es la el control de confección, el control de confección acá está muy escueto pero en grandes rasgos controlamos que las cantidades coincidan y después anotamos si las prendas tienen desperfectos todas estas prendas con desperfectos que son solucionables se mandan de vuelta al taller salvo determinadas fallas, que no, que por ejemplo que la prenda le falte un hilo a lo largo de la propia tela son defectos de la tela misma eso el taller no los puede solucionar pero si la prenda está descosida manchada o rota tiene que ver la forma de solucionarlo y se la mandamos de regreso eso en el sistema Estaría bueno que esté cargado Ah mira mostró el tema ese deberá Fernando Lorena Jaime claro la hoja completa del documento está dividido por los talleres Percy Mario Janeth Jacinto Y así.
+23:03 Martin Pinillos: Son todos los talleres esos bien, perfecto.
+23:05 Nahuel Sam Sam: Claro, acá tengo todos los talleres organizados por color para no perderme porque en el control en el de control de corte tengo todos los talleres Juntos por ejemplo acá 14 de septiembre. Yo tengo todos los cortes juntos lo que se corte en día en la semana todos van quedando juntos y los voy identificando con color para saber a qué taller se los mandé más fácil hacer un color. Sí es mucho más fácil replicar eso en caso de que vos elija un color entonces así que estábamos con
+23:39 Martin Pinillos: Bien, vos en el sistema que mostraste antes vos lo que armas ahí son los los pedidos, verdad? No es que este o vos le pasa solamente el Excel para qué Usan el sistema digamos para un tema de histórico.
+23:54 Nahuel Sam Sam: Se usa para control de la de todo lo que está en producción todo lo que se
+23:59 Martin Pinillos: sí
+24:00 Nahuel Sam Sam: cortó todo lo que ingresa y todo lo que sale es más para control porque va generando un historial, digamos.
+24:11 Martin Pinillos: Bien, pero esos Cortes y todo lo hacen los talleres Entonces los que hagan ellos
+24:15 Nahuel Sam Sam: Claro, Sí sí.
+24:17 Martin Pinillos: digamos ellos cada uno o lo querrás.
+24:19 Nahuel Sam Sam: No, no, no, en los talleres no tienen los talleres no tienen injerencia en nada de lo que nosotros organizamos ellos solamente porque a veces ni siquiera te
+24:25 Martin Pinillos: Vos perfecto.
+24:28 Nahuel Sam Sam: rellenan un remito, por eso no, no les confiaría nunca el que me carguen cosas en un sistema.
+24:34 Martin Pinillos: Vos Entonces lo cargas por cada uno de los talleres.
+24:38 Nahuel Sam Sam: Claro, lo cargo manual por eso y tengo que ir cargando manual cada uno de los procesos en cambio en el sistema, que yo estoy buscando es como que bueno lo tengo acá, que me quedo un registro acá, pero si yo le doy Ok o no, O lo modifico Ya salte directamente al otro como que sea todo más automático, no? tan introductivo que tenga que agregar son cada cosa
+25:01 Martin Pinillos: Sí, sí, sí, sí, no tal cual tal cual pero estoy, estoy diagramándomelo por eso por ahí te hago preguntas y voy, puede ser que vaya y venga este. Está bien bueno.
+25:15 Nahuel Sam Sam: Sí sí, queremos Mostrarme también lo de los viajes de Santi así por las dudas podemos que adaptamos nosotros el sistema Pero por eso tiene todo Santiago es el cadete que hace la vida que yo te expliqué Martín de del taller el depósito el depósito el taller etcétera, Yo también está en un Excel obviamente. Está dividido en verde acá abajo que se ve en color verde son los días que trabaja media jornada y los días que no trabajan media jornada no tienen color.
+25:46 Nahuel Sam Sam: Y acá tienes cargado todos los viajes el nombre de donde tiene que ir en la acción retirar o llevar quién A dónde lo tiene que llevar? Y de dónde lo tiene que buscar tenemos que tiene que tenerse así fecha nada no es mucha
+25:56 Martin Pinillos: Todas esas son las ubicaciones de los talleres perfecto.
+26:02 Nahuel Sam Sam: ciencia se carga Como si fuese un registro directamente. El número de viajes el nombre del taller la dirección el teléfono el horario y la observación que sería la acción a realizar. de bueno es el
+26:23 Martin Pinillos: También le cargan temas de viáticos este.
+26:30 Nahuel Sam Sam: El por eso lo de los viáticos yo no manejo Los costos lo maneja directamente otra área y pero acá está señalado el tema del día completo y el mediodía eso se divide por color color verde trabaja, mediodía gana menos O sea no hace falta tiempo que ustedes tengan ahí el precio se lo pueden agregar con el tema de los permisos para que puedan ir viendo Ah bueno está ganando esto también Martín nos pide mucho el tema de los permisos de usuario para que haya distintos usuarios, que tengan privilegios el tema del usuario, el Mati por
+26:58 Martin Pinillos: Sí, sí, sí sí sí.
+27:02 Nahuel Sam Sam: ejemplo más acceso después el de los responsables de corte otro acceso para poder cargar ciertos datos Y así. Sí, a mi jefe, que seguro alguno van a tener que tener una reunión porque hay
+27:13 Martin Pinillos: está
+27:13 Nahuel Sam Sam: muchas cosas que yo no sé, pero le interesa mucho el tema de los tiempos de las prendas que están en producción Los costos del mismo producto que se pueda cargar Por ejemplo, la Force no sale el producto que nos vendemos de costos que se le puede ir cargando para que se modifica o nada que te quede un historial de chef, no sé en mayo, no salía producir una Force 15 mil pesos. Ahora no sale 20 ese tipo de datos estadísticos Está bueno se le pueden agregar esos precios.
+27:47 Nahuel Sam Sam: También inventario de las de las prendas que quedan en obsoleto que no sirven que están manchadas y no son recuperables que serían las mermas de la producción.
+27:59 Martin Pinillos: exactamente
+28:02 Nahuel Sam Sam: lo mismo que de las telas que se pueda cargar de qué proveedor son Cuánto costó y los metros digamos los metros que están fallados cuando se detectó la falla Estaría bueno que se puede hacer cargar porque depende el proveedor también tenés los días de reclamo algunos te permiten un reclamo dentro de un mes otros te lo permiten entre los 15 días de llegada de la tela Eso estaría
+28:26 Martin Pinillos: perfil
+28:29 Nahuel Sam Sam: bueno que se pueda identificar que toda esa información no la necesito pero él
+28:32 Martin Pinillos: OK Sí sí está
+28:34 Nahuel Sam Sam: Seguro que sí De todas formas Martín yo hablé con Gastón Y le dije Mira hasta nosotros tenemos que presenté a tesis tal fecha, o sea, como máximo plazo leí febrero Entonces le digo capaz, que un sistema tan grande, que él necesita no puede abarcarse en ese tiempo cualquier cosa después podemos salir trabajando, pero bueno ver nosotros qué podemos llegar a desarrollar en este tiempo para que le sirva también y para que también puedan ver, digamos de cómo trabajamos de cómo va mejorando también para que no no
+29:00 Martin Pinillos: Sí, sí sí.
+29:01 Nahuel Sam Sam: se asusten. Digamos sin demasiado. Digamos lo que hay que hacer.
+29:04 Martin Pinillos: Sí, no, no, sí sí, porque este por lo que estoy porque me están contando Sí es bastante, hay muchos módulos muchas cosas que considerar también bueno, el tema de los permisos y los roles No creo que que podamos armar todo lo que todos los alcances que ustedes necesitan para febrero Pero sí, hay algo algo Habría que ver ahora vamos a ver de todo lo que me han contado, Qué es lo que necesitan y si no hay dependencia con otra cosa, encaramos eso y después vamos viendo los otros módulos que requieren así tienen sistemas completos, pero
+29:46 Nahuel Sam Sam: Habría que ver la necesidad más
+29:48 Martin Pinillos: bueno. Este, por lo menos entregarles algo algo este básico que realmente les sirva. Si puede reemplazar algo el sistema de diez o si puede reemplazar algo del Excel también de diez Pero bueno, vamos a ver este primero definir eso, qué qué podemos hacer con el tiempo que tenemos y después vemos de la continuidad. Eso no hay problema.
+30:17 Nahuel Sam Sam: Oye Martín escúchame a ti el sistema, Por ejemplo, si vos estás usando poder compartir algún usuario, digamos que para ver un poquito Cómo funciona el sistema. Y también tengo el de control de calidad.
+30:40 Martin Pinillos: Sí si nos podés pasar, o sea, si nos podés pasar acceso al sistema de ustedes y obviamente que lo que lo manejen.
+30:47 Nahuel Sam Sam: Está todo fraccionado lo que me dice que está todo fraccionado y está, o sea el código hoy mentira, no le va a poder pasar, pero yo lo que le estoy diciendo es un usuario así como para ingresar y poder revisar más que nada, no la información del historial, sino Cómo funciona el sistema sin que modifique.
+31:03 Martin Pinillos: Claro, Sí el código No no es necesario, pero sí Digamos si se puede tener un acceso con algún usuario con roles básicos o que lo bueno o lo ves vos nahuel, vos te encargas de de esa parte así recabamos más información.
+31:24 Nahuel Sam Sam: José porfa Bueno yo
+31:26 Martin Pinillos: Y de y después perdón, después si nos podés pasar los Excel que vos usás no hace falta que esté incompletos Si podés, dejarle datos datos Random como para tener una idea y en base a eso bueno, este poder armar algo algo copado.
+31:47 Nahuel Sam Sam: Bien.
+31:48 Martin Pinillos: nos serviría el tema de los Excel
+31:50 Nahuel Sam Sam: Ah bueno hay otra parte que me faltó comentarla que es no solamente hacemos control de calidad de la prenda cuando llega del taller de confeccionar, sino que se hace otro control cuando se manda a estampar y cuando vuelve de estampado que es otro proceso en el que se hacen se pueden o no lo mismo que en la parte de entrega de los talleres entregas parciales, que eso es lo que nos viene mareando y es en lo que más me cuesta por ahí llevarle el hilo al Excel porque tengo que andar si no tengo que andar generando como 15 hojitas solamente para una producción porque me van entregando la puchitos.
+32:23 Martin Pinillos: eso vos recibí del taller todas las prendas confeccionadas y después claro, no
+32:28 Nahuel Sam Sam: No siempre.
+32:29 Martin Pinillos: siempre, pero este alguna producción la mandas a otro lado es otro taller para
+32:36 Nahuel Sam Sam: Después de la parte de producción se manda a otro taller distinto que es una
+32:36 Martin Pinillos: que
+32:39 Nahuel Sam Sam: que es estampado.
+32:41 Martin Pinillos: Solamente estampado bien.
+32:42 Nahuel Sam Sam: Solo estampado puede ser estampado con serigrafía o estampado con vinilo?
+32:46 Martin Pinillos: Bien.
+32:49 Nahuel Sam Sam: Lo mismo hacen entregas parciales y ahí ya el producto se entrega de distinta manera y ahí es donde él te dijo que están que depende de la remera es el loguito de un color o de otro es a ese taller, se refería que se le hace otra entrega.
+33:05 Martin Pinillos: Ok bien es otro proceso perfecto.
+33:09 Nahuel Sam Sam: En el que se tiene que cargar otras cosas Ese carga directamente el modelo
+33:11 Martin Pinillos: claro
+33:13 Nahuel Sam Sam: confeccionar si se le mandan los vinilos se le mandan las etiquetas las bolsas llevan otros productos otras cosas distintas que en la parte de confección.
+33:21 Martin Pinillos: Bien, y después cuando ustedes tienen ya todo en la la producción ahí como hacen tienen que tienen digamos armado en un Excel los envíos o cómo o ustedes digamos, se lo dan algún mayorista Cómo cómo hacen digamos esa parte.
+33:42 Nahuel Sam Sam: el tema a la venta por la web
+33:43 Martin Pinillos: El tema de la venta claro o usted directamente venden por la web.
+33:47 Nahuel Sam Sam: Se vende por web y si no en el local que el local se maneja con el mismo sistema
+33:50 Martin Pinillos: perfecto
+33:52 Nahuel Sam Sam: de la web Así que no habla del stock, digamos Cuando alguien compra se va descontando el estómago cuando se suma una pérdida Sí eso es directamente del sistema de facturación de la tienda nube que tiene un sistema aparte que está enlazado y ya está con eso es una aplicación de tienda Descargar y ya te hace
+34:08 Martin Pinillos: Ah listo listo
+34:11 Nahuel Sam Sam: digamos el control del stock. Lo sumo lo resta en caso de cambio y todo esto un quilombo, así que mejor tenemos que saber.
+34:17 Martin Pinillos: No, sí sí, sí, Listo o sea, esa parte, ya tienen resuelta. Era para para saber más que nada por las dudas.
+34:26 Nahuel Sam Sam: Lo que más necesitamos organizar es el resto entre la parte.
+34:29 Martin Pinillos: Sí sí, el tema de la de la producción, si hay que hacer alguna devolución la confección de la este de las prendas deltizado el armado del modelo de cada tizado bien bueno. Algo más que tengan que aclarar.
+34:56 Nahuel Sam Sam: El sistema, dónde está? Yo tengo un sistema en el que cargo la los audios de los productos son las partes más chiquititas de una prenda hacia un cierre un botón un ojalillo la etiqueta de composición todo eso yo lo tengo cargado en otro sistema aparte. Tienes acá lector completa en el que te dice, por ejemplo el tipo una broma de 10 milímetros de 10 centímetros el stock, que tengo el mínimo que tengo que
+35:24 Martin Pinillos: sí
+35:27 Nahuel Sam Sam: tener si hay año nuevo comprado y te pone este, porque lo que había llamado, pero hay algunos que tienen El lector sugerido de lo que tendrías que tener.
+35:38 Martin Pinillos: Eso vos lo va descontando mano al stock.
+35:41 Nahuel Sam Sam: Esto lo voy descontando acá con movimiento Al momento de mandar una producción, Yo vengo, por ejemplo, lleva tierras invisible, le doy salida Lleva esto está por paquete el paquetito viene de a 100 mando un paquete persona que lo hace y pongo acá abajo, eh? Producción Jacinto y el número de corte 150 ese también lo hicieron con el clavo este también. Después le doy a registrar movimiento y ya queda acá lo único que sí no puedo borrar movimientos Así que no.
+36:15 Martin Pinillos: Perfecto, cada todos esos son elementos para las prendas que no las no, las armo ustedes sino que las compran a un proveedor.
+36:25 Nahuel Sam Sam: Claro, se compran un proveedor que esto Estaría bueno que me lo si se puede
+36:26 Martin Pinillos: Bien.
+36:29 Nahuel Sam Sam: introducir en la parte del sistema que me lo detecte automáticamente con el corte con el corte del vamos acá en producción.
+36:36 Martin Pinillos: Sí, sí, sí, sí sí, la idea la idea sería eso.
+36:39 Nahuel Sam Sam: que sería esto etiquetas de composición y todo eso lo tengo yo no todo sistema, pero no me lo detecta automáticamente, o sea, esto lo tengo, lo tengo como cálculo sobre el otro es un stop un historial de Por ejemplo yo cargo, tengo que hacer algún folsor Bueno voy a necesitar, no sé siete rollos de elástico porque tengo una tengo también otro Excel con un calculador y estimativo de elásticos para la cintura por cada uno tiene su su particularidad, Dónde está acá también por fórmulas está cargado este tenés de puños de campera medida de las camperas Este es el genérico las cantidades que por ejemplo del talle que se mandaron a confeccionar se va alargando el cálculo para 84 talleres, Por ejemplo, si estás 63.84 metros el rollo tiene 25 metros total dos rollos y medio y ahí te va alargando después el total de Para esa producción.
+37:39 Martin Pinillos: Está bueno eso de capaz, que después te pide los cálculos eso las fórmulas.
+37:44 Nahuel Sam Sam: Cada vez como que yo tengo cada cosa la tengo muy separada Pero tengo todo Bueno me gustaría que esté todo junto Sí con respecto eso de ahí Martín vos, me
+37:48 Martin Pinillos: Sí, sí.
+37:52 Nahuel Sam Sam: pasas más o menos lo que se necesite yo hablo con el mate y vemos de de facilitar esa información de alguna forma, aunque no sean los cálculos reales o lo que sea para proteger la información, pero para que vean Cómo funciona la
+38:03 Martin Pinillos: Sí, no.
+38:04 Nahuel Sam Sam: fórmula la última arranque con esto que es lo que más nos está haciendo inconveniente y después ver el tema de las estadísticas completas con Gastón verlo más adelante, Sí sí, eso lo de la estadística lo hacemos de por sí porque tenemos que presentar como una una torta, digamos de probabilidad de estadística de errores, que hablamos Martín que nos piden mucho las tesis de probabilidad a veces ya lo incluimos nosotros, pero pero bueno es tremendo sistema Así que vamos a ver qué es lo más primordial para hacer.
+38:35 Nahuel Sam Sam: que yo
+38:35 Martin Pinillos: Sí tal cual tal cual este ahora. Bueno, sí, Si no hay más. Estaríamos. Digamos, no, no hay más nada que Es el que se les ocurra agregar este.
+38:50 Nahuel Sam Sam: Mira te muestro Por último el el control de los chicos el de reproducción, por
+38:55 Martin Pinillos: Porque sí.
+38:57 Nahuel Sam Sam: ejemplo. Se mandó a confeccionar estos tres colores. Moka Safari hay cuatro azul y negro Tenés las cantidades que acá se carga el corte directamente todo lo que vimos antes del Excel se carga ahí el corte por talles. Y acá carga, por ejemplo, vinieron bien. cuatro Acá te va a decir el faltante que te falta por entregar, pero abajo tenés la opción de cargar falla. Esto está bueno que sea así por unitario porque puedes poner por ejemplo, vino una sucia de la boca en talle s la cargas vino otra después te vino otro también talle s otra prenda, pero está sucia y está con la costura torcida lo que tiene de bueno Esto que le vas a cargar falla acá tenés así cargamos otra frase, por ejemplo, talle s1, mosca esta está sucia. Después yo puedo discernir si por ejemplo esta se arregló.
+39:56 Nahuel Sam Sam: Sí, sirve. Esta no se pudo arreglar, no sirve. Nosotros tuvimos un sistema en el que me lo ponía todo junto y no me dice hernia, si yo podía si de las dos s unas hizo se solucionó y la otra no directamente me ponía o se solucionaron todas o no se solucionó ninguna Esto está bueno que sea así. y me genera mi propio historial de stock después en el Stop
+40:20 Martin Pinillos: a esto digamos es la la carga de las mermas de
+40:24 Nahuel Sam Sam: Esta es la carga del control de producción cargas las prendas que vinieron bien.
+40:28 Martin Pinillos: Sí, Ah bien.
+40:29 Nahuel Sam Sam: Las fallas respectivas y por ejemplo claro y si te hacen entregas parciales, vos
+40:31 Martin Pinillos: La va descontando.
+40:34 Nahuel Sam Sam: solamente vas cargando acá, por ejemplo acá cuatro me vinieron dos con falsa, pero todavía me tiene que entregar 19.
+40:41 Martin Pinillos: Bien.
+40:41 Nahuel Sam Sam: Esto está bueno así, pero Estaría bueno que tenga una opción que diga guardado parcial y que estos números no se vuelvan a tocar, así que te dé la opción de ingresar más prendas, pero que estos no se vuelvan a tocar.
+40:54 Martin Pinillos: Okay bien bien.
+40:55 Nahuel Sam Sam: Y que eso sí, registra una fecha, por ejemplo, ingresaron el 15 de abril, no sé y te queda acá guardado parcial no completo como este acabo cerrás la
+41:02 Martin Pinillos: Claro hoy por hoy ya
+41:06 Nahuel Sam Sam: orden y no podés volver a tocar nada. Pero y si vas para atrás para que me salís de la hora acá te dice ves, te dice la orden que ya llegó y tiene fallas a resolver Y acá te pone para arreglar o no, Si ese arreglo todo arreglado, pero está yo bueno, que te dé la opción aparte de la arreglada enviado al taller de regreso, Porque acá, si le doy arreglada, pasa directamente al stop como Bueno si no, no sé si la mandé o no al taller me queda acá como pendiente Estaría bueno, que esté acá el enviado taller para esa descartar, que sí se fue o que quedó acá.
+41:46 Nahuel Sam Sam: Y después te da el stock completo ahora porque no tengo ninguna cosa, pero pero este dice que llegaron cuatro.
+41:51 Martin Pinillos: perfecto
+41:54 Nahuel Sam Sam: Y acá tenés el stock de las fallas, te dice que fallas que está ayer Cuál es la falla y te da el historial de acá abajo. Esto así para la parte de control de producción está perfecto, o sea, lo único que suele agregaría sería eso del que se le pueden hacer guardados parciales, a las entregas cosa que nadie pueda editar nunca más lo que se entregó más que los administradores de última.
+42:18 Martin Pinillos: claro, Perfecto perfecto bueno
+42:21 Nahuel Sam Sam: Esto sí te ve Yo tengo un esto es un Beta no está, no está aplicado todavía. Yo lo estuve haciendo pruebas, pero anda re bien Y como no es una beta y no está enlazada, te puedo comparar directamente el enlace y listo lo ves?
+42:37 Martin Pinillos: de una seis
+42:40 Nahuel Sam Sam: Y bueno, después en cuanto al sistema no tengo más tiempo. Yo creo que estamos bien, pero bueno, sí, después me falta información es como
+42:47 Martin Pinillos: Nada, Sí sí, sí, ya. Tranqui, tranqui, tenemos tenemos toda ahora para hacer una banda de cosas primero hay que hacer el análisis y ver qué qué les podemos entregar en el tiempo que tenemos y Qué podemos hacer para más adelante Este ahí después Bueno les voy a pasar, le voy a pasar a nahuel Para que veas si este si puede pedir el tema de los Excel y acceso a sistema, aunque sea que pueda acceder, él no, no hay problema en eso, pero para tener más información así podemos hablar algo copado este, así que bueno no por mi parte creo que nada más, no
+43:28 Nahuel Sam Sam: ok
+43:32 Martin Pinillos: sé si los chicos. Que está Juan no tendrá alguna duda?
+43:39 Nahuel Sam Sam: Estaba grabando. Después cuando tengamos alguna respuesta podemos realizar una llamada con
+43:41 Martin Pinillos: Sino bueno, no lo dejamos acá.
+43:49 Nahuel Sam Sam: Gastón el dueño que él va a tener muchas más cosas para decir aportar.
+43:53 Martin Pinillos: Sí sí, sí, de ahora de una Bueno chicos suerte.
+43:56 Nahuel Sam Sam: de eso chao nos

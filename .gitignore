@@ -1,0 +1,30 @@
+# Dependencies / builds
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+coverage/
+**/coverage/
+.angular/
+**/.angular/
+
+# Environment / secrets
+.env
+**/.env
+!.env.example
+!**/.env.example
+
+# Test artifacts
+playwright-report/
+**/playwright-report/
+test-results/
+**/test-results/
+
+# Oracle local data
+oracle-data/
+
+# Logs / OS / IDE
+*.log
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,31 @@
+{
+  "name": "monkyforce",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo de MonkyForce: backend NestJS + frontend Angular",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=24.15.0 <25"
+  },
+  "scripts": {
+    "dev:backend": "npm --workspace backend run start:dev",
+    "dev:frontend": "npm --workspace frontend run start",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "npm --workspace backend run build",
+    "build:frontend": "npm --workspace frontend run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "npm --workspace backend run test",
+    "test:frontend": "npm --workspace frontend run test:ci",
+    "test:e2e": "npm --workspace frontend run e2e",
+    "db:up": "docker compose up -d oracle",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v && docker compose up -d oracle",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "3.9.9"
+  }
+}

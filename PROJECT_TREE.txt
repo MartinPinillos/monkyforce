@@ -1,0 +1,118 @@
+monkyforce/
+├── .agents/
+│   └── skills/
+│       └── monkyforce/
+│           └── SKILL.md
+├── .github/
+│   └── pull_request_template.md
+├── backend/
+│   ├── database/
+│   │   ├── migrations/
+│   │   │   └── .gitkeep
+│   │   ├── scripts/
+│   │   │   └── .gitkeep
+│   │   └── seeds/
+│   │       └── .gitkeep
+│   ├── src/
+│   │   ├── common/
+│   │   │   ├── filters/
+│   │   │   │   └── all-exceptions.filter.ts
+│   │   │   └── middleware/
+│   │   │       └── correlation-id.middleware.ts
+│   │   ├── config/
+│   │   │   └── env.validation.ts
+│   │   ├── database/
+│   │   │   ├── data-source.ts
+│   │   │   ├── database.config.ts
+│   │   │   └── database.module.ts
+│   │   ├── features/
+│   │   │   └── .gitkeep
+│   │   ├── health/
+│   │   │   ├── health.controller.spec.ts
+│   │   │   ├── health.controller.ts
+│   │   │   └── health.module.ts
+│   │   ├── app.module.ts
+│   │   └── main.ts
+│   ├── test/
+│   │   └── health.e2e-spec.ts
+│   ├── .env.example
+│   ├── nest-cli.json
+│   ├── package.json
+│   ├── README.md
+│   ├── tsconfig.build.json
+│   ├── tsconfig.json
+│   ├── vitest.config.e2e.ts
+│   └── vitest.config.ts
+├── docker/
+│   └── oracle/
+│       └── setup/
+│           └── 01-create-app-user.sh
+├── docs/
+│   └── sources/
+│       └── Meeting Transcription.txt
+├── frontend/
+│   ├── e2e/
+│   │   └── smoke.spec.ts
+│   ├── public/
+│   │   └── .gitkeep
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── core/
+│   │   │   │   ├── auth/
+│   │   │   │   │   └── .gitkeep
+│   │   │   │   ├── guards/
+│   │   │   │   │   └── .gitkeep
+│   │   │   │   ├── http/
+│   │   │   │   │   └── credentials.interceptor.ts
+│   │   │   │   ├── layout/
+│   │   │   │   │   └── .gitkeep
+│   │   │   │   └── services/
+│   │   │   │       └── .gitkeep
+│   │   │   ├── features/
+│   │   │   │   ├── home/
+│   │   │   │   │   └── pages/
+│   │   │   │   │       └── home-page.component.ts
+│   │   │   │   └── .gitkeep
+│   │   │   ├── shared/
+│   │   │   │   ├── components/
+│   │   │   │   │   └── .gitkeep
+│   │   │   │   ├── directives/
+│   │   │   │   │   └── .gitkeep
+│   │   │   │   ├── models/
+│   │   │   │   │   └── .gitkeep
+│   │   │   │   └── pipes/
+│   │   │   │       └── .gitkeep
+│   │   │   ├── app.component.html
+│   │   │   ├── app.component.scss
+│   │   │   ├── app.component.spec.ts
+│   │   │   ├── app.component.ts
+│   │   │   ├── app.config.ts
+│   │   │   └── app.routes.ts
+│   │   ├── environments/
+│   │   │   ├── environment.development.ts
+│   │   │   └── environment.ts
+│   │   ├── index.html
+│   │   ├── main.ts
+│   │   └── styles.scss
+│   ├── angular.json
+│   ├── package.json
+│   ├── playwright.config.ts
+│   ├── README.md
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   └── tsconfig.spec.json
+├── spec/
+│   └── features/
+│       └── .gitkeep
+├── .editorconfig
+├── .env.example
+├── .gitignore
+├── .nvmrc
+├── .prettierrc
+├── AGENTS.md
+├── ARCHITECTURE.md
+├── docker-compose.yml
+├── KNOWLEDGE.md
+├── package.json
+├── README.md
+└── ROADMAP.md
