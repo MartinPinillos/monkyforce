@@ -16,9 +16,9 @@ Workflow Skill                 ✅
 Roadmap                        ✅
 Monorepo                       ✅
 Integración Jira ↔ GitHub      ✅ validada con KAN-6 / PR #1
-Foundation configurada         🟡 pendiente validación runtime completa
-Primera SPEC funcional         ⬜
-Primera feature funcional      ⬜
+Foundation configurada         ✅ validada con Oracle local, builds y tests
+Primera SPEC funcional         ✅ KAN-10 Auth / RBAC
+Primera feature funcional      🟡 implementada, pendiente review/merge
 ```
 
 ---
@@ -67,17 +67,17 @@ Ya existe en el starter:
 - [x] Supertest
 - [x] Playwright
 
-Pendiente de validación real en entorno local:
+Validación real ejecutada en entorno local para `KAN-10`:
 
-- [ ] Ejecutar `npm install`
-- [ ] Levantar Oracle con `npm run db:up`
-- [ ] Validar creación/configuración del usuario Oracle de aplicación
-- [ ] Validar conexión NestJS → Oracle
-- [ ] Ejecutar build backend
-- [ ] Ejecutar build frontend
-- [ ] Ejecutar unit tests
-- [ ] Ejecutar integration tests aplicables
-- [ ] Ejecutar smoke/E2E base
+- [x] Ejecutar `npm install`
+- [x] Levantar Oracle con `npm run db:up`
+- [x] Validar creación/configuración del usuario Oracle de aplicación
+- [x] Validar conexión NestJS → Oracle
+- [x] Ejecutar build backend
+- [x] Ejecutar build frontend
+- [x] Ejecutar unit tests
+- [x] Ejecutar integration tests aplicables
+- [x] Ejecutar smoke/E2E base
 
 No marcar estos puntos como completos únicamente porque exista la configuración en el repositorio.
 
@@ -85,20 +85,18 @@ No marcar estos puntos como completos únicamente porque exista la configuració
 
 # 4. Primera feature recomendada — Auth / RBAC
 
-La primera feature funcional propuesta sigue siendo Auth / RBAC, pero el orden obligatorio es Jira-first.
+La primera feature funcional es Auth / RBAC y siguió el flujo Jira-first.
 
 ```text
-Crear Feature Jira: Auth / RBAC
-        ↓
-Jira devuelve KAN-XX real
+Feature Jira: Auth / RBAC (`KAN-10`)
         ↓
 Crear branch desde main
-feat/auth-rbac-kan-xx
+feat/auth-rbac-kan-10
         ↓
 Crear SPEC
-spec/features/001-KAN-XX-auth-rbac.md
+spec/features/001-KAN-10-auth-rbac.md
         ↓
-Implementar
+Implementar + validar
 ```
 
 Alcance esperado:
@@ -119,7 +117,9 @@ Alcance esperado:
 - protección CSRF;
 - tests.
 
-Esta feature deberá cerrar varias decisiones pendientes de arquitectura antes de implementarse.
+La implementación cerró las decisiones de refresh token y CSRF en la SPEC y
+en `ARCHITECTURE.md`. Permanece pendiente el catálogo funcional definitivo de
+roles y permisos (`OQ-008`).
 
 ---
 
@@ -197,8 +197,6 @@ Consultar `KNOWLEDGE.md` para `OQ-*`.
 
 - [ ] Versión exacta/objetivo de Oracle para ambientes del proyecto
 - [ ] UI Library
-- [ ] Estrategia completa de refresh token
-- [ ] Implementación CSRF
 - [ ] Estrategia de migrations en ambientes superiores
 - [ ] Hosting
 - [ ] Reverse proxy
@@ -243,10 +241,11 @@ en lugar de construir todas las tablas primero, luego todo el backend y finalmen
 
 # 10. Estado activo
 
-**Próxima tarea recomendada:**
+**Feature activa:** `KAN-10` — Auth / RBAC.
 
-> Validar el foundation del starter en entorno local ejecutando instalación, Oracle, conexión, builds y tests base.
+La implementación, migration y validaciones están completas en
+`feat/auth-rbac-kan-10`. Resta review y merge autorizado del Pull Request; la
+Card no debe marcarse finalizada antes de ese paso.
 
-Una vez validado el foundation:
-
-> Crear la Feature Jira de Auth / RBAC, obtener el `KAN-XX` real, crear la branch `feat/auth-rbac-kan-xx` y recién entonces crear `spec/features/001-KAN-XX-auth-rbac.md`.
+Después del merge, seleccionar el primer flujo productivo vertical sin
+adelantar decisiones abiertas de negocio.

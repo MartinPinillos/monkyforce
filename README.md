@@ -57,6 +57,8 @@ cp backend/.env.example backend/.env
 
 npm install
 npm run db:up
+# Esperar a que `docker compose ps` informe `healthy`.
+npm --workspace backend run migration:run
 ```
 
 En terminales separadas:
@@ -77,6 +79,12 @@ Backend   http://localhost:3000/api
 Swagger   http://localhost:3000/api/docs
 Oracle    localhost:1521
 ```
+
+La autenticación web usa las cookies HttpOnly `mf_access` y `mf_refresh`.
+Antes de iniciar el backend deben configurarse secretos distintos de al menos
+32 caracteres en `backend/.env`; `backend/.env.example` documenta todas las
+variables requeridas. En desarrollo, Angular consume la API con credenciales
+desde `http://localhost:4200`.
 
 ## Build y tests
 
