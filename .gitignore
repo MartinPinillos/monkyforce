@@ -7,6 +7,8 @@ coverage/
 **/coverage/
 .angular/
 **/.angular/
+*.tsbuildinfo
+**/*.tsbuildinfo
 
 # Environment / secrets
 .env
