@@ -371,18 +371,24 @@ La integración Jira ↔ GitHub está basada en el Jira Key.
 
 ## 11.1 Regla Jira-first
 
-Toda feature nueva que se vaya a implementar debe tener primero una Card Jira real.
+Todo trabajo que vaya a implementarse y requiera trazabilidad debe utilizar una Card Jira real antes de comenzar el desarrollo.
 
-Orden obligatorio:
+Para una nueva funcionalidad, el orden esperado es:
 
 ```text
 Necesidad / Feature
        ↓
-Crear Card Jira
+Crear o identificar Card Jira
        ↓
 Jira devuelve KAN-XX
        ↓
+Detectar sprint activo cuando corresponda
+       ↓
+Clasificar tipo de trabajo
+       ↓
 Crear branch desde main
+       ↓
+Posicionar workspace local en la branch si se va a implementar
        ↓
 Crear / actualizar SPEC
        ↓
@@ -397,24 +403,66 @@ Validar Jira Development
 Merge cuando corresponda
 ```
 
-Nunca crear una branch de feature usando un Jira Key supuesto.
+Nunca crear una branch usando un Jira Key supuesto.
 
 Nunca predecir un número como `KAN-25`, `KAN-26`, etc.
 
 El Jira Key debe provenir de la respuesta real de Jira.
 
-## 11.2 Automatización Jira → GitHub por el agente
+## 11.2 Tipo de Card Jira
 
-Cuando el usuario indique claramente que quiere **crear, iniciar o implementar una nueva feature**, y el agente disponga de acceso autorizado a Jira y GitHub, el agente debe ejecutar el flujo sin pedir al usuario que haga manualmente pasos que puede realizar:
+Clasificar primero el trabajo.
 
-1. buscar si ya existe una Card Jira que represente la feature;
-2. si no existe, crear una Card en el proyecto `KAN`;
-3. para una nueva funcionalidad, usar el tipo Jira `Feature`, salvo que el usuario indique otro tipo o la tarea sea claramente un bug/tarea técnica;
+Convención por defecto:
+
+```text
+Nueva funcionalidad
+→ Jira: Feature
+→ Git: feat/
+
+Bug
+→ Jira: Error
+→ Git: fix/
+
+Refactor
+→ Jira: Tarea
+→ Git: refactor/
+
+Configuración / infraestructura / mantenimiento / documentación técnica
+→ Jira: Tarea
+→ Git: chore/
+```
+
+El usuario puede indicar explícitamente otro tipo.
+
+No transformar una tarea técnica en Feature solo para cumplir una convención.
+
+## 11.3 Sprint
+
+Cuando el usuario indique que una Card debe **iniciarse o implementarse ahora**:
+
+1. consultar si existe un sprint activo del proyecto `KAN`;
+2. si existe y el entorno permite modificar el campo Sprint, asignar la Card al sprint activo;
+3. si no existe sprint activo, dejar la Card en Backlog;
+4. si la Card es solo planificación futura, no incorporarla automáticamente al sprint activo;
+5. no inventar nombres o IDs de sprint.
+
+Si el agente no puede modificar el Sprint por limitaciones de acceso o herramienta, debe informarlo y continuar únicamente con los pasos que sí pueda ejecutar.
+
+## 11.4 Automatización Jira → GitHub por el agente
+
+Cuando el usuario indique claramente que quiere **crear, iniciar o implementar** un trabajo, y el agente disponga de acceso autorizado a Jira y GitHub:
+
+1. buscar si ya existe una Card Jira que represente el trabajo;
+2. si no existe, crearla en el proyecto `KAN` usando el tipo correspondiente;
+3. si se va a trabajar ahora, asignarla al sprint activo cuando corresponda;
 4. obtener el Jira Key real devuelto por Jira;
-5. crear una branch nueva desde `main` usando ese Jira Key;
-6. crear/actualizar la SPEC con el mismo Jira Key;
-7. informar al usuario el Jira Key, branch y SPEC creados;
-8. continuar con la implementación si esa fue la solicitud del usuario.
+5. seleccionar el prefijo de branch según el tipo de trabajo;
+6. crear una branch nueva desde `main`;
+7. si el agente opera dentro de un workspace Git local y va a implementar, posicionar el workspace local en esa branch;
+8. crear/actualizar la SPEC cuando corresponda;
+9. informar al usuario el Jira Key, branch y SPEC creada;
+10. continuar con la implementación si esa fue la solicitud.
 
 Si el agente no tiene acceso o autorización a Jira o GitHub:
 
@@ -425,16 +473,15 @@ Si el agente no tiene acceso o autorización a Jira o GitHub:
 
 Una conversación exploratoria del tipo “analicemos”, “qué conviene”, “cómo lo haríamos” o similar **no debe crear automáticamente Cards ni branches** salvo pedido explícito del usuario.
 
-## 11.3 Convención Jira
+## 11.5 Convención Jira
 
-Para una feature real:
+El Jira Key canónico se escribe en mayúsculas:
 
 ```text
-Jira Key canónico
 KAN-25
 ```
 
-El Jira Key canónico se escribe en mayúsculas en:
+Usarlo en:
 
 - SPEC;
 - commits;
@@ -442,12 +489,30 @@ El Jira Key canónico se escribe en mayúsculas en:
 - documentación;
 - referencias internas.
 
-## 11.4 Convención de branches
+## 11.6 Convención de branches
 
-Para features:
+Formato general:
 
 ```text
-feat/<descripcion>-kan-XX
+<prefijo>/<descripcion>-kan-XX
+```
+
+Prefijos:
+
+```text
+feat/       nueva funcionalidad
+fix/        corrección de bug
+refactor/   refactor sin cambio funcional
+chore/      configuración, infraestructura, mantenimiento o documentación técnica
+```
+
+Ejemplos:
+
+```text
+feat/abm-rollos-kan-25
+fix/error-entrega-parcial-kan-31
+refactor/repositorio-rollos-kan-32
+chore/configurar-ci-kan-33
 ```
 
 Reglas:
@@ -456,23 +521,38 @@ Reglas:
 - usar minúsculas en el nombre de branch;
 - incluir siempre el Jira Key convertido a minúsculas;
 - crear la branch desde `main`;
-- no implementar la feature directamente en `main`.
+- no implementar directamente en `main`;
+- elegir el prefijo por la naturaleza real del trabajo, no por el tipo de Card únicamente.
 
-Ejemplo:
+El Jira Key canónico sigue siendo `KAN-XX` en mayúsculas fuera del nombre de branch.
 
-```text
-Jira
-KAN-25
+## 11.7 Branch local / workspace
 
-Branch
-feat/abm-rollos-kan-25
+Crear una branch remota en GitHub **no cambia automáticamente** la branch activa del clon local.
+
+Si el agente va a modificar código desde un workspace local:
+
+1. comprobar el estado Git actual;
+2. crear o recuperar la branch correspondiente;
+3. si fue creada remotamente, ejecutar el equivalente a `git fetch`;
+4. posicionar el workspace en la branch correcta;
+5. verificar la branch activa antes de modificar archivos.
+
+Verificación esperada:
+
+```bash
+git branch --show-current
 ```
 
-Esta convención de branch usa `kan-25` en minúsculas; el Jira Key canónico sigue siendo `KAN-25`.
+Debe devolver la branch asociada al Jira Key.
 
-## 11.5 Convención de commits
+Nunca comenzar una implementación mientras el workspace continúe en `main`.
 
-Los commits relacionados con una Card deben incluir el Jira Key canónico cuando corresponda:
+Excepción: si el usuario pidió únicamente crear/verificar una Card o branch remota y explícitamente indicó que no se implemente código, no es obligatorio cambiar la branch local.
+
+## 11.8 Convención de commits
+
+Los commits relacionados con una Card deben incluir el Jira Key canónico:
 
 ```text
 KAN-25 implementar alta de rollos
@@ -482,7 +562,7 @@ KAN-25 agregar tests de integración
 
 No usar `KAN-XX` como placeholder en commits reales.
 
-## 11.6 Convención de Pull Requests
+## 11.9 Convención de Pull Requests
 
 Título:
 
@@ -498,33 +578,27 @@ El cuerpo del PR debe reemplazar cualquier placeholder del template por el Jira 
 - Issue: `KAN-25`
 ```
 
-Nunca dejar en un PR real:
+Nunca dejar `KAN-XX` en un PR real si ya existe una Card concreta.
 
-```text
-KAN-XX
-```
+## 11.10 Verificación de vinculación
 
-si ya existe una Card concreta.
-
-## 11.7 Verificación de vinculación
-
-Antes de declarar finalizada una feature, verificar que Jira Development refleje correctamente, según corresponda:
+Antes de declarar finalizado un trabajo, verificar que Jira Development refleje correctamente, según corresponda:
 
 - branch;
 - commits;
 - Pull Request;
 - estado del Pull Request.
 
-La sincronización Jira ↔ GitHub puede no ser instantánea. No inventar una vinculación si todavía no aparece.
+La sincronización Jira ↔ GitHub puede no ser instantánea.
 
 Si no aparece después de un tiempo razonable:
 
-1. verificar que la branch/commit/PR contiene el Jira Key correcto;
-2. verificar que el repositorio correcto es `MartinPinillos/monkyforce`;
-3. verificar la integración GitHub for Atlassian;
+1. verificar que branch/commit/PR contiene el Jira Key correcto;
+2. verificar el repositorio `MartinPinillos/monkyforce`;
+3. verificar GitHub for Atlassian;
 4. informar el problema antes de declarar éxito.
 
-## 11.8 Merge
+## 11.11 Merge
 
 El agente no debe mergear automáticamente un Pull Request salvo que:
 
@@ -533,7 +607,7 @@ El agente no debe mergear automáticamente un Pull Request salvo que:
 
 Antes del merge deben estar verificados los criterios que correspondan de la Definition of Done.
 
-Después del merge, si la feature se declara cerrada, verificar que Jira Development refleje el PR como mergeado.
+Después del merge, si el trabajo se declara cerrado, verificar que Jira Development refleje el PR como mergeado.
 
 No inventar ni forzar transiciones de estado Jira no definidas por el workflow del proyecto.
 
@@ -541,35 +615,38 @@ No inventar ni forzar transiciones de estado Jira no definidas por el workflow d
 
 # 12. Flujo de trabajo obligatorio
 
-Cuando se inicia una implementación de feature:
+Cuando se inicia una implementación:
 
 ```text
 1. Crear o identificar Card Jira
 2. Obtener Jira Key real
-3. Leer documentación relevante
-4. Identificar feature activa
-5. Crear branch desde main con Jira Key
-6. Crear o revisar SPEC
-7. Revisar preguntas abiertas
-8. Inspeccionar backend/frontend afectados
-9. Identificar patrón reutilizable
-10. Proponer archivos a modificar
-11. Implementar
-12. Agregar tests
-13. Ejecutar builds
-14. Ejecutar tests
-15. Comparar contra acceptance criteria
-16. Crear/actualizar Pull Request con Jira Key
-17. Verificar vinculación en Jira Development
-18. Actualizar TASKS, Jira y ROADMAP
-19. Mergear solo cuando esté autorizado
-20. Verificar estado final de Jira/GitHub si la feature se cierra
+3. Detectar sprint activo cuando corresponda
+4. Clasificar tipo de trabajo
+5. Leer documentación relevante
+6. Identificar feature/tarea activa
+7. Crear branch desde main usando el prefijo correcto
+8. Posicionar el workspace local en la branch si se va a implementar
+9. Crear o revisar SPEC cuando corresponda
+10. Revisar preguntas abiertas
+11. Inspeccionar backend/frontend afectados
+12. Identificar patrón reutilizable
+13. Proponer archivos a modificar
+14. Implementar
+15. Agregar tests
+16. Ejecutar builds
+17. Ejecutar tests
+18. Comparar contra acceptance criteria
+19. Crear/actualizar Pull Request con Jira Key
+20. Verificar vinculación en Jira Development
+21. Actualizar TASKS, Jira y ROADMAP
+22. Mergear solo cuando esté autorizado
+23. Verificar estado final de Jira/GitHub si el trabajo se cierra
 ```
 
 Para bugs, refactors, infraestructura o documentación, adaptar el flujo sin inventar pasos funcionales innecesarios, manteniendo la trazabilidad Jira cuando exista una Card asociada.
 
----
 
+# 13. Inspección antes de modificar
 # 13. Inspección antes de modificar
 
 Antes de crear:
