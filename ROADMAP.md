@@ -244,8 +244,9 @@ en lugar de construir todas las tablas primero, luego todo el backend y finalmen
 **Feature activa:** `KAN-10` — Auth / RBAC.
 
 La implementación, migration y validaciones están completas en
-`feat/auth-rbac-kan-10`. Resta review y merge autorizado del Pull Request; la
-Card no debe marcarse finalizada antes de ese paso.
+`feat/auth-rbac-kan-10` y el Pull Request
+[#4](https://github.com/MartinPinillos/monkyforce/pull/4). Resta review y merge
+autorizado; la Card no debe marcarse finalizada antes de ese paso.
 
 Después del merge, seleccionar el primer flujo productivo vertical sin
 adelantar decisiones abiertas de negocio.

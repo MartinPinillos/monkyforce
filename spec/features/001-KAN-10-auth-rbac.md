@@ -1,8 +1,9 @@
 # 001 — Auth / RBAC
 
-Estado: En implementación
+Estado: En revisión
 Jira: KAN-10
 Branch: `feat/auth-rbac-kan-10`
+Pull Request: [#4](https://github.com/MartinPinillos/monkyforce/pull/4)
 
 ## 1. SPEC
 
@@ -418,7 +419,7 @@ No se incorpora Passport porque el guard necesario es pequeño, específico para
 - [x] Ejecutar frontend Tests (4 archivos, 11 tests).
 - [x] Ejecutar Playwright E2E (2 proyectos, 2 tests).
 - [x] Actualizar documentación y TASKS con resultados reales.
-- [ ] Crear commits con `KAN-10`.
-- [ ] Crear Pull Request `[KAN-10] Auth / RBAC`.
+- [x] Crear commits con `KAN-10`.
+- [x] Crear Pull Request `[KAN-10] Auth / RBAC` (#4).
 - [ ] Verificar branch, commits y PR en Jira Development.
-- [ ] No mergear sin autorización explícita.
+- [x] No mergear sin autorización explícita.
