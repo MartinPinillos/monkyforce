@@ -18,6 +18,9 @@ async function bootstrap() {
   const frontendOrigin =
     config.get<string>('FRONTEND_ORIGIN') ?? 'http://localhost:4200';
 
+  app.enableCsrfProtection({
+    trustedOrigins: [frontendOrigin],
+  });
   app.setGlobalPrefix(apiPrefix);
   app.use(helmet());
   app.use(cookieParser());
@@ -43,6 +46,7 @@ async function bootstrap() {
       .setTitle('MonkyForce API')
       .setDescription('MonkyForce production management API')
       .setVersion('0.1.0')
+      .addCookieAuth('mf_access')
       .build();
 
     const document = SwaggerModule.createDocument(app, swaggerConfig);

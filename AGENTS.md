@@ -275,6 +275,16 @@ Playwright
 
 Cubrir flujos críticos, no cada detalle visual.
 
+Distinguir explícitamente entre:
+
+- tests unitarios;
+- tests HTTP con mocks/in-memory;
+- tests de persistencia real Oracle;
+- Playwright con API mockeada;
+- E2E full-stack real.
+
+No presentar un test mockeado como validación full-stack.
+
 ---
 
 # 9. Definition of Done
@@ -288,6 +298,7 @@ Para declarar una feature finalizada, según corresponda debe cumplir:
 [ ] SPEC implementada
 [ ] criterios de aceptación cumplidos
 [ ] branch asociada al Jira Key
+[ ] workspace local en la branch correcta durante la implementación
 [ ] Pull Request asociado al Jira Key
 [ ] Unit Tests
 [ ] Integration Tests
@@ -297,6 +308,9 @@ Para declarar una feature finalizada, según corresponda debe cumplir:
 [ ] frontend build OK
 [ ] tests OK
 [ ] documentación actualizada
+[ ] TASKS actualizadas
+[ ] revisión de alcance / git diff realizada
+[ ] no existen cambios transversales no autorizados
 [ ] Jira Development refleja correctamente la actividad de GitHub
 [ ] PR mergeado, si la feature se declara cerrada
 ```
@@ -392,9 +406,13 @@ Posicionar workspace local en la branch si se va a implementar
        ↓
 Crear / actualizar SPEC
        ↓
+Revisar alcance y cambios transversales
+       ↓
 Implementar
        ↓
 Tests + Builds
+       ↓
+Revisar git diff / scope
        ↓
 Pull Request
        ↓
@@ -461,8 +479,9 @@ Cuando el usuario indique claramente que quiere **crear, iniciar o implementar**
 6. crear una branch nueva desde `main`;
 7. si el agente opera dentro de un workspace Git local y va a implementar, posicionar el workspace local en esa branch;
 8. crear/actualizar la SPEC cuando corresponda;
-9. informar al usuario el Jira Key, branch y SPEC creada;
-10. continuar con la implementación si esa fue la solicitud.
+9. revisar si el PLAN requiere cambios transversales sujetos a autorización;
+10. informar al usuario el Jira Key, branch y SPEC creada;
+11. continuar con la implementación si esa fue la solicitud.
 
 Si el agente no tiene acceso o autorización a Jira o GitHub:
 
@@ -628,25 +647,27 @@ Cuando se inicia una implementación:
 8. Posicionar el workspace local en la branch si se va a implementar
 9. Crear o revisar SPEC cuando corresponda
 10. Revisar preguntas abiertas
-11. Inspeccionar backend/frontend afectados
-12. Identificar patrón reutilizable
-13. Proponer archivos a modificar
-14. Implementar
-15. Agregar tests
-16. Ejecutar builds
-17. Ejecutar tests
-18. Comparar contra acceptance criteria
-19. Crear/actualizar Pull Request con Jira Key
-20. Verificar vinculación en Jira Development
-21. Actualizar TASKS, Jira y ROADMAP
-22. Mergear solo cuando esté autorizado
-23. Verificar estado final de Jira/GitHub si el trabajo se cierra
+11. Revisar alcance y cambios transversales previstos
+12. Inspeccionar backend/frontend afectados
+13. Identificar patrón reutilizable
+14. Proponer archivos a modificar
+15. Implementar
+16. Agregar tests
+17. Ejecutar builds
+18. Ejecutar tests
+19. Comparar contra acceptance criteria
+20. Revisar git diff y validar scope
+21. Crear/actualizar Pull Request con Jira Key
+22. Verificar vinculación en Jira Development
+23. Actualizar TASKS, Jira y ROADMAP
+24. Mergear solo cuando esté autorizado
+25. Verificar estado final de Jira/GitHub si el trabajo se cierra
 ```
 
 Para bugs, refactors, infraestructura o documentación, adaptar el flujo sin inventar pasos funcionales innecesarios, manteniendo la trazabilidad Jira cuando exista una Card asociada.
 
+---
 
-# 13. Inspección antes de modificar
 # 13. Inspección antes de modificar
 
 Antes de crear:
@@ -671,14 +692,106 @@ No crear arquitecturas paralelas.
 
 Si una feature necesita apartarse de `ARCHITECTURE.md`:
 
-1. explicarlo en el Plan;
+1. explicarlo en el PLAN;
 2. justificar el motivo;
-3. no modificar silenciosamente el patrón;
-4. si la decisión es global, actualizar `ARCHITECTURE.md`.
+3. identificar si el cambio es local o transversal;
+4. no modificar silenciosamente el patrón;
+5. si requiere un cambio transversal, solicitar autorización antes de aplicarlo;
+6. si la decisión autorizada es global, actualizar `ARCHITECTURE.md`.
 
 ---
 
-# 15. Context7 MCP
+# 15. Control de alcance y cambios transversales
+
+Una feature no autoriza cambios globales o transversales únicamente porque faciliten la implementación o permitan pasar tests.
+
+El agente debe mantener el cambio mínimo necesario para cumplir la SPEC.
+
+## 15.1 Cambios que requieren autorización explícita
+
+Antes de realizar cualquiera de los siguientes cambios, detenerse e informar al usuario:
+
+- actualizar cualquier versión de Node.js, TypeScript, Angular, NestJS, TypeORM u Oracle;
+- realizar upgrades major de otras dependencias;
+- cambiar package manager;
+- cambiar configuración global de TypeScript;
+- cambiar configuración global de Angular;
+- deshabilitar caches, prebundling u optimizaciones globales;
+- modificar `docker-compose.yml` por razones no definidas explícitamente en la SPEC;
+- modificar configuración de CI/CD;
+- cambiar estrategia de migrations;
+- cambiar infraestructura global del monorepo;
+- introducir una nueva librería arquitectónica;
+- cambiar decisiones aceptadas de `ARCHITECTURE.md`;
+- realizar cambios de configuración global únicamente para hacer pasar tests.
+
+Para solicitar autorización, informar:
+
+1. archivo que se necesita modificar;
+2. motivo concreto;
+3. problema que resuelve;
+4. impacto sobre backend/frontend/testing/infraestructura;
+5. alternativa sin realizar el cambio;
+6. qué ocurriría si no se autoriza.
+
+No realizar el cambio hasta recibir autorización.
+
+## 15.2 Dependencias
+
+Agregar una dependencia solamente cuando sea necesaria para la feature y esté justificada en el PLAN.
+
+No actualizar otras dependencias aprovechando la instalación.
+
+Una nueva dependencia runtime debe quedar explícitamente informada en la SPEC/PLAN.
+
+Un cambio en `package-lock.json` es aceptable cuando deriva de una dependencia autorizada, pero no debe utilizarse para introducir upgrades no relacionados.
+
+## 15.3 Configuración de testing
+
+No modificar configuración global de desarrollo o producción únicamente para hacer pasar un test.
+
+Preferir, en este orden:
+
+1. corregir el test;
+2. utilizar configuración específica de testing;
+3. crear configuración aislada para integration/E2E;
+4. solicitar autorización para un cambio global.
+
+Los tests mockeados deben identificarse como tales.
+
+No afirmar “E2E full-stack” si alguna parte crítica del flujo está interceptada o simulada.
+
+## 15.4 Cambios oportunistas
+
+No realizar durante una feature:
+
+- refactors no relacionados;
+- limpiezas generales;
+- reformatting masivo;
+- upgrades preventivos;
+- correcciones ajenas a la Card Jira;
+- modificaciones “ya que estamos”;
+- cambios de infraestructura no requeridos por los criterios de aceptación.
+
+Si se detecta otro problema, reportarlo y crear/recomendar una Card separada.
+
+## 15.5 Verificación antes de commit
+
+Antes de crear cada commit:
+
+1. revisar `git status`;
+2. revisar `git diff`;
+3. comprobar que cada archivo modificado pertenece al alcance de la Card;
+4. identificar cambios transversales;
+5. revertir cambios accidentales;
+6. verificar que no haya secretos, artefactos o archivos generados innecesarios;
+7. solicitar autorización para cambios transversales necesarios.
+
+Nunca ocultar un cambio transversal dentro de una feature funcional.
+
+---
+
+# 16. Context7 MCP
 
 Usar Context7 para documentación técnica actual de:
 
@@ -701,19 +814,20 @@ Context7
 
 ---
 
-# 16. Dependencias externas
+# 17. Dependencias externas
 
 Antes de agregar una dependencia:
 
-1. verificar si NestJS/Angular ya resuelven el problema;
+1. verificar si NestJS/Angular/Node ya resuelven el problema;
 2. validar mantenimiento;
 3. validar compatibilidad;
-4. justificar su necesidad;
-5. evitar dependencias que solo ahorren pocas líneas de código.
+4. justificar su necesidad en el PLAN;
+5. evitar dependencias que solo ahorren pocas líneas de código;
+6. revisar si su incorporación implica cambios transversales sujetos a autorización.
 
 ---
 
-# 17. Seguridad
+# 18. Seguridad
 
 Obligatorio:
 
@@ -725,11 +839,12 @@ Obligatorio:
 - validar permisos en backend;
 - CORS restringido;
 - cookies seguras;
-- protección CSRF según arquitectura definida.
+- protección CSRF según `ARCHITECTURE.md` y la SPEC activa;
+- no reabrir o reemplazar decisiones de seguridad ya formalizadas sin una razón documentada y autorización si el cambio es transversal.
 
 ---
 
-# 18. Código generado por IA
+# 19. Código generado por IA
 
 Debe ser:
 
@@ -738,13 +853,14 @@ Debe ser:
 - compilable;
 - tipado;
 - testeable;
-- alineado con las convenciones existentes.
+- alineado con las convenciones existentes;
+- limitado al alcance autorizado.
 
 No generar fragmentos aislados si la tarea requiere una implementación completa.
 
 ---
 
-# 19. Alcance
+# 20. Alcance
 
 Implementar solamente lo definido en la feature activa.
 
@@ -752,9 +868,18 @@ No adelantar funcionalidades del roadmap porque parezcan convenientes.
 
 No crear módulos futuros “por las dudas”.
 
+No ampliar silenciosamente el alcance para resolver problemas secundarios.
+
+Si aparece una necesidad fuera de alcance:
+
+1. reportarla;
+2. indicar si bloquea o no;
+3. recomendar una Card separada cuando corresponda;
+4. no implementarla sin autorización.
+
 ---
 
-# 20. Preguntas abiertas
+# 21. Preguntas abiertas
 
 Toda referencia `OQ-*` en `KNOWLEDGE.md` representa una decisión funcional pendiente.
 
@@ -764,7 +889,7 @@ Si bloquea una feature, debe quedar explícito en su SPEC.
 
 ---
 
-# 21. Finalización de una tarea
+# 22. Finalización de una tarea
 
 Al terminar, informar:
 
@@ -773,11 +898,53 @@ Al terminar, informar:
 - Pull Request, si existe;
 - archivos creados;
 - archivos modificados;
+- dependencias agregadas o actualizadas;
+- cambios de configuración;
 - tests agregados;
+- qué tests usan mocks/in-memory y cuáles usan infraestructura real;
 - comandos ejecutados;
 - resultado de builds/tests;
 - criterios cumplidos;
+- revisión de alcance realizada;
+- cambios transversales autorizados, si hubo;
 - estado de vinculación Jira Development cuando corresponda;
 - pendientes reales.
 
 No declarar éxito si no se verificó.
+
+No declarar “sin pendientes críticos” sin revisar explícitamente SPEC, TASKS, `git diff`, tests y alcance real de las validaciones.
+
+
+# Eficiencia de comunicación
+
+El agente debe responder de forma breve, precisa y orientada a resultado.
+
+Por defecto:
+
+- no repetir el pedido del usuario;
+- no narrar paso a paso acciones ya ejecutadas;
+- no pegar logs completos;
+- no pegar archivos completos;
+- no enumerar dependencias transitivas salvo que sean relevantes;
+- no repetir información presente en Jira, SPEC o PR;
+- no explicar decisiones obvias si no existe un problema;
+- agrupar resultados similares;
+- informar únicamente cambios, verificaciones, bloqueos y decisiones relevantes.
+
+Reporte final por defecto:
+
+1. Jira / branch / PR.
+2. Qué se hizo.
+3. Tests/builds ejecutados y resultado.
+4. Pendientes o bloqueos.
+
+Máximo recomendado: 10-15 líneas salvo que el usuario pida detalle o exista
+un problema que requiera explicación.
+
+Si el usuario pide una revisión, priorizar hallazgos accionables:
+
+BLOQUEA
+RECOMENDADO
+SIN PROBLEMA
+
+No generar análisis extenso de elementos que no requieren acción.

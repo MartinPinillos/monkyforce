@@ -26,12 +26,14 @@
     "db:reset": "docker compose down -v && docker compose up -d oracle",
     "typeorm": "typeorm-ts-node-esm -d src/database/data-source.ts",
     "migration:run": "npm run typeorm -- migration:run",
-    "migration:revert": "npm run typeorm -- migration:revert"
+    "migration:revert": "npm run typeorm -- migration:revert",
+    "bootstrap:user": "npm run build && node dist/commands/bootstrap-user.js"
   },
   "dependencies": {
     "@nestjs/common": "12.1.2",
     "@nestjs/config": "12.0.1",
     "@nestjs/core": "12.1.2",
+    "@nestjs/jwt": "12.0.3",
     "@nestjs/platform-express": "12.1.2",
     "@nestjs/swagger": "12.0.2",
     "@nestjs/typeorm": "12.0.2",

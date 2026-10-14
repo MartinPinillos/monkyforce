@@ -4,7 +4,7 @@ services:
     container_name: monkyforce-oracle
     restart: unless-stopped
     ports:
-      - "1521:1521"
+      - '1521:1521'
     environment:
       ORACLE_PWD: ${ORACLE_PWD:-OracleDev_2026}
       ORACLE_CHARACTERSET: AL32UTF8
@@ -16,8 +16,8 @@ services:
     healthcheck:
       test:
         [
-          "CMD-SHELL",
-          "echo 'select 1 from dual;' | sqlplus -s system/${ORACLE_PWD:-OracleDev_2026}@//localhost:1521/FREE >/dev/null 2>&1"
+          'CMD-SHELL',
+          "echo 'select 1 from dual;' | sqlplus -s system/${ORACLE_PWD:-OracleDev_2026}@//localhost:1521/FREE >/dev/null 2>&1",
         ]
       interval: 30s
       timeout: 10s

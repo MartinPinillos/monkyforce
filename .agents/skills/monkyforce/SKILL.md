@@ -153,8 +153,97 @@ spec/features/NNN-KAN-XX-<descripcion>.md
 Si Jira o GitHub no están disponibles/autorizados, informar exactamente qué paso quedó bloqueado y no simular la operación.
 
 
-# 4. SPEC
-# 4. SPEC
+# 4. Control de scope y cambios transversales
+
+Antes de implementar y antes de cada commit:
+
+1. revisar qué archivos se prevé modificar;
+2. validar que cada cambio pertenece a la Card y a la SPEC;
+3. detectar modificaciones globales o transversales;
+4. mantener el cambio mínimo necesario;
+5. solicitar autorización antes de aplicar cambios transversales restringidos.
+
+Requieren aprobación previa:
+
+- cualquier cambio de versión de Node.js, TypeScript, Angular, NestJS, TypeORM u Oracle;
+- upgrades major de otras dependencias;
+- cambios globales de `tsconfig`;
+- cambios globales de `angular.json`;
+- cambios en `docker-compose.yml` no definidos explícitamente en la SPEC;
+- cambios de CI/CD;
+- cambio de package manager;
+- cambios globales de migrations/infraestructura;
+- deshabilitar cache, prebundle u optimizaciones globales;
+- nuevas librerías arquitectónicas;
+- cambios a decisiones aceptadas de `ARCHITECTURE.md`.
+
+Antes de pedir autorización informar:
+
+```text
+Archivo
+Motivo
+Problema que resuelve
+Impacto
+Alternativa sin el cambio
+Qué ocurre si no se autoriza
+```
+
+No realizar el cambio hasta recibir autorización.
+
+No aprovechar una feature para:
+
+- refactors no relacionados;
+- upgrades preventivos;
+- limpiezas generales;
+- reformatting masivo;
+- correcciones de otras Cards;
+- cambios “ya que estamos”.
+
+Si aparece otro problema, reportarlo como pendiente o recomendar una Card separada.
+
+## Testing y configuración global
+
+Si un test requiere un cambio global, intentar en este orden:
+
+1. corregir el test;
+2. usar configuración específica de testing;
+3. crear configuración aislada para integration/E2E;
+4. solicitar autorización para modificar configuración global.
+
+No presentar Playwright con API mockeada como E2E full-stack.
+
+Distinguir siempre:
+
+```text
+Unit
+HTTP con mocks/in-memory
+Persistencia Oracle real
+Frontend unit/integration
+Playwright con API mock
+E2E full-stack real
+```
+
+## Antes de commit
+
+Ejecutar:
+
+```text
+git status
+git diff
+```
+
+y verificar:
+
+- todos los archivos pertenecen al scope;
+- no hay cambios accidentales;
+- no hay upgrades no autorizados;
+- no hay secretos;
+- no hay artefactos generados innecesarios;
+- todo cambio transversal necesario fue autorizado.
+
+---
+
+# 5. SPEC
 
 La sección SPEC debe definir:
 
@@ -179,7 +268,7 @@ No incluir detalles técnicos innecesarios en la parte funcional.
 
 ---
 
-# 5. PLAN
+# 6. PLAN
 
 El Plan debe analizar:
 
@@ -194,6 +283,9 @@ Concurrencia
 Auditoría
 Testing
 Migraciones
+Dependencias
+Cambios de configuración
+Cambios transversales
 Riesgos
 ```
 
@@ -207,9 +299,11 @@ No aplica
 
 cuando corresponda.
 
+Si el PLAN detecta un cambio sujeto a autorización por `AGENTS.md`, detenerse antes de aplicarlo.
+
 ---
 
-# 6. TASKS
+# 7. TASKS
 
 Las tareas deben ser concretas y verificables.
 
@@ -231,12 +325,13 @@ Ejemplo:
 - [ ] Ejecutar backend build
 - [ ] Ejecutar frontend build
 - [ ] Ejecutar tests
+- [ ] Revisar git diff / alcance
 - [ ] Verificar Jira Development
 ```
 
 ---
 
-# 7. Implementación backend
+# 8. Implementación backend
 
 Antes de crear código:
 
@@ -263,7 +358,7 @@ No saltar capas sin justificación.
 
 ---
 
-# 8. Implementación frontend
+# 9. Implementación frontend
 
 Antes de crear código:
 
@@ -278,7 +373,7 @@ No crear arquitectura paralela.
 
 ---
 
-# 9. Base de datos
+# 10. Base de datos
 
 Antes de modificar Oracle:
 
@@ -293,7 +388,7 @@ No inventar estructuras basadas únicamente en intuición.
 
 ---
 
-# 10. Seguridad
+# 11. Seguridad
 
 Para cualquier endpoint privado evaluar:
 
@@ -314,11 +409,11 @@ SameSite=Lax
 
 No almacenar tokens de autenticación en `localStorage` ni `sessionStorage`.
 
-Las decisiones todavía abiertas de refresh token y CSRF deben resolverse en la SPEC correspondiente, no por suposición.
+Seguir las decisiones vigentes de `ARCHITECTURE.md` y la SPEC activa para refresh token, CSRF y RBAC. No reemplazar una decisión de seguridad ya formalizada sin justificarla y solicitar autorización cuando el cambio sea transversal.
 
 ---
 
-# 11. Testing
+# 12. Testing
 
 Por cada feature evaluar:
 
@@ -354,11 +449,15 @@ Si sí, crear tests.
 
 Si sí, agregar Playwright.
 
+Clasificar correctamente la cobertura como mock/in-memory, infraestructura real o full-stack real.
+
 No afirmar que un build/test está OK si no se ejecutó.
+
+No afirmar que existe validación full-stack si backend, Oracle o API fueron simulados.
 
 ---
 
-# 12. Bug
+# 13. Bug
 
 Branch por defecto:
 
@@ -383,7 +482,7 @@ Evitar corregir únicamente el síntoma.
 
 ---
 
-# 13. Refactor
+# 14. Refactor
 
 Branch por defecto:
 
@@ -401,7 +500,7 @@ Un refactor:
 
 ---
 
-# 14. Context7
+# 15. Context7
 
 Usar Context7 si se necesita verificar:
 
@@ -417,21 +516,23 @@ No usarlo para inventar reglas del negocio.
 
 ---
 
-# 15. Pull Request y Jira Development
+# 16. Pull Request y Jira Development
 
 Antes de cerrar una feature:
 
 1. usar título de PR `[KAN-XX] Título`;
 2. reemplazar placeholders `KAN-XX` del template por el Jira Key real;
 3. confirmar que branch/commits/PR mantienen trazabilidad;
-4. verificar que Jira Development refleje la actividad de GitHub;
-5. si la sincronización tarda, no declarar una vinculación inexistente;
-6. mergear únicamente si está autorizado;
-7. después del merge, verificar el estado final si la feature se declara cerrada.
+4. revisar nuevamente `git diff` contra `main`;
+5. confirmar que no existen cambios transversales no autorizados;
+6. verificar que Jira Development refleje la actividad de GitHub;
+7. si la sincronización tarda, no declarar una vinculación inexistente;
+8. mergear únicamente si está autorizado;
+9. después del merge, verificar el estado final si la feature se declara cerrada.
 
 ---
 
-# 16. Finalización
+# 17. Finalización
 
 Antes de considerar una feature terminada:
 
@@ -444,11 +545,15 @@ Antes de considerar una feature terminada:
 [ ] Integration Tests si aplican
 [ ] Frontend Tests si aplican
 [ ] E2E crítico si aplica
+[ ] cobertura clasificada correctamente: mock vs real vs full-stack
 [ ] backend build OK si aplica
 [ ] frontend build OK si aplica
 [ ] tests OK
 [ ] TASKS actualizadas
 [ ] ROADMAP actualizado si corresponde
+[ ] git diff revisado
+[ ] scope validado
+[ ] no existen cambios transversales no autorizados
 [ ] PR asociado al Jira Key
 [ ] Jira Development verificado
 [ ] PR mergeado si la feature se declara cerrada
@@ -456,7 +561,7 @@ Antes de considerar una feature terminada:
 
 ---
 
-# 17. Reporte final
+# 18. Reporte final
 
 Informar:
 
@@ -467,18 +572,26 @@ SPEC
 Pull Request, si existe
 Implementado
 Archivos modificados
+Dependencias agregadas/actualizadas
+Cambios de configuración
 Tests
+Qué tests usan mocks/in-memory
+Qué tests usan infraestructura real
+Si existe o no E2E full-stack real
 Builds
 Estado Jira Development
+Cambios transversales autorizados
 Pendientes
 Decisiones tomadas
 ```
 
 No afirmar que algo funciona si no se verificó.
 
+No afirmar “no quedan pendientes críticos” sin revisar SPEC, TASKS, `git diff`, tests y alcance real de las validaciones.
+
 ---
 
-# 18. Regla final
+# 19. Regla final
 
 La prioridad es:
 
@@ -497,3 +610,24 @@ optimización
 ```
 
 No agregar complejidad preventiva.
+
+## Comunicación eficiente
+
+Durante la ejecución no emitir reportes intermedios innecesarios.
+
+Al finalizar, responder de forma compacta.
+
+No incluir:
+
+- logs completos;
+- diffs completos;
+- contenido completo de archivos;
+- árboles completos de dependencias;
+- explicación repetida de reglas ya presentes en AGENTS.md/SPEC.
+
+Expandir detalles solo cuando:
+
+- exista un bloqueo;
+- exista una decisión que requiera autorización;
+- falle una validación;
+- el usuario solicite más detalle.

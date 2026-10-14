@@ -723,7 +723,7 @@ Angular deberá utilizar credenciales en requests cuando corresponda.
 Conceptualmente:
 
 ```typescript
-withCredentials: true
+withCredentials: true;
 ```
 
 NestJS deberá habilitar CORS de forma explícita:
@@ -755,15 +755,23 @@ Medidas base:
 - no aceptar CORS abierto;
 - métodos HTTP correctos para operaciones mutables.
 
-La estrategia definitiva deberá implementarse dentro de la feature de autenticación.
+La feature `KAN-10` adopta la protección CSRF nativa de NestJS 12.1 con
+`FRONTEND_ORIGIN` como origen confiable explícito. La defensa combina:
+
+- validación de Fetch Metadata y `Origin` para requests mutables;
+- `SameSite=Lax`;
+- CORS restringido con `credentials=true`;
+- métodos HTTP correctos para mutaciones.
+
+No se utiliza un token double-submit en esta foundation. Si en el futuro se
+incorporan clientes u orígenes nuevos, deberán evaluarse y configurarse de
+forma explícita.
 
 ---
 
 # 22. Refresh Token
 
-La estrategia exacta de refresh token se definirá en la feature de autenticación.
-
-Modelo esperado:
+La feature `KAN-10` define el siguiente modelo:
 
 ```text
 Access Token
@@ -773,9 +781,14 @@ Refresh Token
 duración mayor
 ```
 
-Ambos podrán utilizar cookies HttpOnly separadas.
+Ambos utilizan cookies HttpOnly separadas (`mf_access` y `mf_refresh`). El
+access token dura 15 minutos y el refresh token 7 días por defecto; ambos
+valores son configurables por ambiente.
 
-No se fijarán tiempos definitivos antes de la SPEC de autenticación.
+Cada login crea una sesión revocable en Oracle. Solo se persiste el hash
+SHA-256 del refresh token. Cada refresh rota el token mediante una actualización
+atómica condicionada al hash anterior. El JWT contiene identidad y sesión, pero
+no roles ni permisos: la autorización efectiva se carga desde Oracle.
 
 ---
 
@@ -1798,42 +1811,48 @@ No utilizar sin una necesidad concreta:
 
 # 63. Decisiones aceptadas
 
-| ID | Decisión |
-|---|---|
-| AD-001 | MonkyForce será una aplicación web responsive |
-| AD-002 | Backend y frontend vivirán en un único repositorio GitHub, como aplicaciones separadas dentro de un monorepo |
-| AD-003 | Backend en NestJS + TypeScript |
-| AD-004 | Frontend en Angular + TypeScript |
-| AD-005 | Oracle como base de datos |
-| AD-006 | Oracle local mediante Docker |
-| AD-007 | TypeORM como persistencia principal |
-| AD-008 | `node-oracledb` como driver Oracle |
-| AD-009 | Arquitectura backend modular |
-| AD-010 | Controller → Service → Repository |
-| AD-011 | SQL/procedures solo mediante Repository |
-| AD-012 | JWT para autenticación |
-| AD-013 | JWT web emitido mediante `Set-Cookie` |
-| AD-014 | Cookie `HttpOnly` |
-| AD-015 | Cookie `Secure` |
-| AD-016 | Cookie `SameSite=Lax` |
-| AD-017 | No almacenar JWT en localStorage/sessionStorage |
-| AD-018 | RBAC User–Role–Permission |
-| AD-019 | Usuarios pueden tener múltiples roles |
-| AD-020 | Permisos acumulativos |
-| AD-021 | Autorización efectiva en backend |
-| AD-022 | Swagger/OpenAPI |
-| AD-023 | Vitest para Unit Tests |
-| AD-024 | Supertest para Integration/API Tests |
-| AD-025 | Playwright para E2E |
-| AD-026 | Testing forma parte del Definition of Done |
-| AD-027 | SDD con un archivo por feature |
-| AD-028 | Context7 como documentación técnica para agentes |
-| AD-029 | Configuración y documentación compartida vivirán en la raíz del monorepo |
-| AD-030 | La raíz utilizará npm workspaces para operar backend y frontend |
-| AD-031 | El workflow de features será Jira-first: Card real → Jira Key → branch → SPEC → implementación → PR |
+| ID     | Decisión                                                                                                                                    |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| AD-001 | MonkyForce será una aplicación web responsive                                                                                               |
+| AD-002 | Backend y frontend vivirán en un único repositorio GitHub, como aplicaciones separadas dentro de un monorepo                                |
+| AD-003 | Backend en NestJS + TypeScript                                                                                                              |
+| AD-004 | Frontend en Angular + TypeScript                                                                                                            |
+| AD-005 | Oracle como base de datos                                                                                                                   |
+| AD-006 | Oracle local mediante Docker                                                                                                                |
+| AD-007 | TypeORM como persistencia principal                                                                                                         |
+| AD-008 | `node-oracledb` como driver Oracle                                                                                                          |
+| AD-009 | Arquitectura backend modular                                                                                                                |
+| AD-010 | Controller → Service → Repository                                                                                                           |
+| AD-011 | SQL/procedures solo mediante Repository                                                                                                     |
+| AD-012 | JWT para autenticación                                                                                                                      |
+| AD-013 | JWT web emitido mediante `Set-Cookie`                                                                                                       |
+| AD-014 | Cookie `HttpOnly`                                                                                                                           |
+| AD-015 | Cookie `Secure`                                                                                                                             |
+| AD-016 | Cookie `SameSite=Lax`                                                                                                                       |
+| AD-017 | No almacenar JWT en localStorage/sessionStorage                                                                                             |
+| AD-018 | RBAC User–Role–Permission                                                                                                                   |
+| AD-019 | Usuarios pueden tener múltiples roles                                                                                                       |
+| AD-020 | Permisos acumulativos                                                                                                                       |
+| AD-021 | Autorización efectiva en backend                                                                                                            |
+| AD-022 | Swagger/OpenAPI                                                                                                                             |
+| AD-023 | Vitest para Unit Tests                                                                                                                      |
+| AD-024 | Supertest para Integration/API Tests                                                                                                        |
+| AD-025 | Playwright para E2E                                                                                                                         |
+| AD-026 | Testing forma parte del Definition of Done                                                                                                  |
+| AD-027 | SDD con un archivo por feature                                                                                                              |
+| AD-028 | Context7 como documentación técnica para agentes                                                                                            |
+| AD-029 | Configuración y documentación compartida vivirán en la raíz del monorepo                                                                    |
+| AD-030 | La raíz utilizará npm workspaces para operar backend y frontend                                                                             |
+| AD-031 | El workflow de features será Jira-first: Card real → Jira Key → branch → SPEC → implementación → PR                                         |
 | AD-032 | Las branches de features usarán `feat/<descripcion>-kan-XX`; el Jira Key canónico se mantiene como `KAN-XX` en documentación, commits y PRs |
-| AD-033 | Jira Development + GitHub for Atlassian se utilizarán para trazabilidad de branch/PR |
-| AD-034 | Las versiones base del starter quedaron fijadas en `.nvmrc` y `package.json`; actualmente Node.js 24.21.0, NestJS 12.1.2 y Angular 22.2.2 |
+| AD-033 | Jira Development + GitHub for Atlassian se utilizarán para trazabilidad de branch/PR                                                        |
+| AD-034 | Las versiones base del starter quedaron fijadas en `.nvmrc` y `package.json`; actualmente Node.js 24.21.0, NestJS 12.1.2 y Angular 22.2.2   |
+| AD-035 | Access y refresh tokens usan cookies HttpOnly separadas, secretos independientes y TTL configurables; valores base 15 minutos y 7 días      |
+| AD-036 | Los refresh tokens rotan y solo su hash se persiste en una sesión revocable de Oracle                                                       |
+| AD-037 | Los JWT no contienen roles ni permisos; el backend resuelve autorización vigente desde Oracle para cada request protegido                   |
+| AD-038 | La protección CSRF usa la implementación nativa de NestJS con orígenes confiables explícitos, SameSite=Lax y CORS restringido               |
+| AD-039 | Passwords usan scrypt asíncrono de Node.js con formato versionado y parámetros OWASP N=2^17, r=8, p=1                                       |
+| AD-040 | La foundation RBAC no crea roles ni permisos funcionales hasta cerrar OQ-008 y no implementa bypass por nombre de rol                       |
 
 ---
 
@@ -1843,18 +1862,9 @@ No utilizar sin una necesidad concreta:
 
 Confirmar versión de producción/desarrollo objetivo.
 
-
 ## AP-003 — UI Library
 
 Definir librería visual del frontend.
-
-## AP-004 — Refresh Tokens
-
-Definir estrategia y duración.
-
-## AP-005 — CSRF
-
-Definir implementación exacta de protección.
 
 ## AP-006 — Migrations
 
