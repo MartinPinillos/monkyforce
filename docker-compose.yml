@@ -12,7 +12,7 @@ services:
       APP_DB_PASSWORD: ${APP_DB_PASSWORD:-MonkyForceDev_2026}
     volumes:
       - oracle-data:/opt/oracle/oradata
-      - ./docker/oracle/setup:/opt/oracle/scripts/startup:ro
+      - ./docker/oracle/setup:/opt/oracle/scripts/setup:ro
     healthcheck:
       test:
         [
