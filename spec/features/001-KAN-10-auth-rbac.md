@@ -421,5 +421,5 @@ No se incorpora Passport porque el guard necesario es pequeño, específico para
 - [x] Actualizar documentación y TASKS con resultados reales.
 - [x] Crear commits con `KAN-10`.
 - [x] Crear Pull Request `[KAN-10] Auth / RBAC` (#4).
-- [ ] Verificar branch, commits y PR en Jira Development.
+- [x] Verificar trazabilidad Jira Development: PR abierto detectado desde GitHub.
 - [x] No mergear sin autorización explícita.
