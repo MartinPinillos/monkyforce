@@ -8,7 +8,7 @@ const CONFIRMATION = 'CREATE_INITIAL_USER';
 
 async function bootstrapInitialUser(): Promise<void> {
   const app = await NestFactory.createApplicationContext(AppModule, {
-    logger: ['error', 'warn'],
+    logger: ['log', 'error', 'warn'],
   });
 
   try {

@@ -27,7 +27,7 @@
     "typeorm": "typeorm-ts-node-esm -d src/database/data-source.ts",
     "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
-    "bootstrap:user": "ts-node --esm src/commands/bootstrap-user.ts"
+    "bootstrap:user": "npm run build && node dist/commands/bootstrap-user.js"
   },
   "dependencies": {
     "@nestjs/common": "12.1.2",
