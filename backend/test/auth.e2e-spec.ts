@@ -16,6 +16,10 @@ import type {
 } from '../src/features/auth/auth-sessions.repository.js';
 import { AUTH_SESSIONS_REPOSITORY } from '../src/features/auth/auth-sessions.repository.js';
 import { AuthController } from '../src/features/auth/auth.controller.js';
+import {
+  ACCESS_TOKEN_COOKIE,
+  REFRESH_TOKEN_COOKIE,
+} from '../src/features/auth/auth.constants.js';
 import { AuthService } from '../src/features/auth/auth.service.js';
 import { RequirePermissions } from '../src/features/auth/decorators/require-permissions.decorator.js';
 import type { AuthSessionEntity } from '../src/features/auth/entities/auth-session.entity.js';
@@ -178,7 +182,11 @@ describe('Auth API (e2e)', () => {
   });
 
   it('rotates the refresh cookie and keeps the session usable', async () => {
-    await login(agent);
+    const loginResponse = await login(agent);
+    const previousRefreshCookie = cookiePair(
+      loginResponse,
+      REFRESH_TOKEN_COOKIE,
+    );
 
     const refresh = await agent
       .post('/api/auth/refresh')
@@ -190,10 +198,18 @@ describe('Auth API (e2e)', () => {
       cookieHeaders(refresh).some((value) => value.startsWith('mf_refresh=')),
     ).toBe(true);
     await agent.get('/api/auth/me').expect(200);
+
+    await request(app.getHttpServer())
+      .post('/api/auth/refresh')
+      .set('Origin', 'http://localhost:4200')
+      .set('Cookie', previousRefreshCookie)
+      .send({})
+      .expect(401);
   });
 
   it('revokes the server session and clears both cookies on logout', async () => {
-    await login(agent);
+    const loginResponse = await login(agent);
+    const retainedAccessCookie = cookiePair(loginResponse, ACCESS_TOKEN_COOKIE);
 
     const logout = await agent
       .post('/api/auth/logout')
@@ -208,6 +224,10 @@ describe('Auth API (e2e)', () => {
       ]),
     );
     await agent.get('/api/auth/me').expect(401);
+    await request(app.getHttpServer())
+      .get('/api/auth/me')
+      .set('Cookie', retainedAccessCookie)
+      .expect(401);
   });
 
   it('rejects a cross-site mutable browser request', async () => {
@@ -230,6 +250,14 @@ describe('Auth API (e2e)', () => {
 
 class InMemoryUsersRepository implements UsersRepository {
   constructor(private readonly currentUser: () => UserEntity) {}
+
+  async count(): Promise<number> {
+    return 1;
+  }
+
+  async create(): Promise<UserEntity> {
+    throw new Error('Not supported by this in-memory auth fixture');
+  }
 
   async findByLoginNameWithAuthorization(
     normalizedLoginName: string,
@@ -355,4 +383,16 @@ function makeUserRole(code: string, permissionCodes: string[]): UserRoleEntity {
 function cookieHeaders(response: request.Response): string[] {
   const header = response.headers['set-cookie'];
   return Array.isArray(header) ? header : header ? [header] : [];
+}
+
+function cookiePair(response: request.Response, name: string): string {
+  const header = cookieHeaders(response).find((value) =>
+    value.startsWith(`${name}=`),
+  );
+
+  if (!header) {
+    throw new Error(`Expected ${name} Set-Cookie header`);
+  }
+
+  return header.split(';', 1)[0];
 }

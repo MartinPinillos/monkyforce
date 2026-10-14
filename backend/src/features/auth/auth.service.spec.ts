@@ -24,6 +24,8 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     usersRepository = {
+      count: vi.fn(),
+      create: vi.fn(),
       findByLoginNameWithAuthorization: vi.fn(),
       findByIdWithAuthorization: vi.fn(),
     };

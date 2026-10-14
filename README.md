@@ -86,6 +86,14 @@ Antes de iniciar el backend deben configurarse secretos distintos de al menos
 variables requeridas. En desarrollo, Angular consume la API con credenciales
 desde `http://localhost:4200`.
 
+### Primer usuario
+
+Después de ejecutar las migrations, una instalación sin usuarios puede crear
+su primer usuario mediante el comando CLI documentado en
+[`backend/README.md`](backend/README.md#bootstrap-del-primer-usuario). No existe
+un endpoint HTTP público de bootstrap ni se insertan credenciales mediante una
+migration.
+
 ## Build y tests
 
 ```bash

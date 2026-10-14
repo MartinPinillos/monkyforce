@@ -1,11 +1,6 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "cli": {
-    "cache": {
-      "enabled": false
-    }
-  },
   "newProjectRoot": "projects",
   "projects": {
     "monkyforce-frontend": {
@@ -57,9 +52,6 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
-          "options": {
-            "prebundle": false
-          },
           "configurations": {
             "production": {
               "buildTarget": "monkyforce-frontend:build:production"

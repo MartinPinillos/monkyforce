@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 import { CreateAuthRbacFoundation1791931262000 } from '../database/migrations/1791931262000-create-auth-rbac-foundation.js';
 import { AuthSessionEntity } from '../src/features/auth/entities/auth-session.entity.js';
 import { AuthSessionsTypeormRepository } from '../src/features/auth/infrastructure/auth-sessions.typeorm-repository.js';
+import { PasswordHasherService } from '../src/features/auth/security/password-hasher.service.js';
 import { PermissionEntity } from '../src/features/rbac/entities/permission.entity.js';
 import { RolePermissionEntity } from '../src/features/rbac/entities/role-permission.entity.js';
 import { RoleEntity } from '../src/features/rbac/entities/role.entity.js';
@@ -57,11 +58,14 @@ describeOracle('Auth/RBAC persistence (Oracle)', () => {
     const permissions = dataSource.getRepository(PermissionEntity);
     const userRoles = dataSource.getRepository(UserRoleEntity);
     const rolePermissions = dataSource.getRepository(RolePermissionEntity);
+    const passwordHash = await new PasswordHasherService().hash(
+      'test password supplied at runtime',
+    );
 
     const user = await users.save(
       users.create({
         loginName,
-        passwordHash: 'scrypt$test-only',
+        passwordHash,
         isActive: true,
       }),
     );

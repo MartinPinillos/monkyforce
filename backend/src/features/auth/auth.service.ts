@@ -9,6 +9,7 @@ import type { LoginDto } from './dto/login.dto.js';
 import { PasswordHasherService } from './security/password-hasher.service.js';
 import { AuthTokenService } from './security/auth-token.service.js';
 import type { AuthenticatedUser } from '../users/domain/authenticated-user.js';
+import { normalizeLoginName } from '../users/login-name.js';
 import { mapToAuthenticatedUser } from '../users/users.mapper.js';
 import {
   USERS_REPOSITORY,
@@ -32,7 +33,7 @@ export class AuthService {
   ) {}
 
   async login(credentials: LoginDto): Promise<AuthResult> {
-    const loginName = this.normalizeLoginName(credentials.loginName);
+    const loginName = normalizeLoginName(credentials.loginName);
     const user =
       await this.usersRepository.findByLoginNameWithAuthorization(loginName);
 
@@ -135,10 +136,6 @@ export class AuthService {
     if (sessionId) {
       await this.sessionsRepository.revoke(sessionId, new Date());
     }
-  }
-
-  private normalizeLoginName(loginName: string): string {
-    return loginName.trim().toLocaleLowerCase('en-US');
   }
 
   private invalidCredentials(): UnauthorizedException {

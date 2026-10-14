@@ -102,6 +102,21 @@ La foundation utiliza un `loginName` técnico y opaco:
 
 La elección de un identificador funcional definitivo podrá evolucionar en una feature de administración de usuarios sin cambiar la seguridad base.
 
+### 1.7.1 Bootstrap del primer usuario
+
+Una instalación sin usuarios dispone de un comando CLI explícito para crear
+únicamente el primer usuario:
+
+- utiliza el mismo normalizador de `loginName` que el login;
+- genera el hash mediante `PasswordHasherService`;
+- recibe login y password exclusivamente mediante variables de entorno;
+- exige una confirmación explícita y una habilitación adicional en producción;
+- es idempotente cuando el mismo usuario ya existe;
+- rechaza crear un usuario diferente cuando la tabla ya contiene usuarios;
+- no asigna roles ni permisos y no expone un endpoint HTTP.
+
+El comando no reemplaza un futuro ABM de usuarios ni define datos funcionales.
+
 ### 1.8 Contratos HTTP
 
 Base: `/api/auth`.
@@ -284,6 +299,8 @@ Decisiones:
 18. Angular implementa login, sesión, logout, credentials, guard y manejo de estados/errores sin guardar tokens.
 19. Existen tests unitarios, de integración, frontend y un flujo Playwright crítico acorde al entorno disponible.
 20. Builds y tests ejecutados quedan registrados en TASKS y en el reporte final.
+21. Una instalación limpia puede crear de forma explícita e idempotente el primer usuario con un hash real, sin endpoint público ni credenciales versionadas.
+22. Existe una integración real HTTP + Oracle que valida login, cookies, autorización, rotación, replay, logout y revocación persistida.
 
 ### 1.16 Casos de error
 
@@ -325,7 +342,7 @@ No se incorpora Passport porque el guard necesario es pequeño, específico para
 - `AP-003`: UI library. No bloquea un formulario accesible con estilos propios mínimos.
 - `AP-007`: hosting y reverse proxy. No bloquea cookies configurables; producción requerirá HTTPS.
 - `AP-008`: auditoría física. No bloquea login ni RBAC base porque no se exponen mutaciones administrativas.
-- La política funcional de contraseñas y el proceso de provisión inicial se definirán con la administración de usuarios. No bloquean login sobre usuarios persistidos ni tests.
+- La política funcional de contraseñas continúa pendiente; el bootstrap inicial aplica solamente límites técnicos y no define esa política.
 
 ## 2. PLAN
 
@@ -338,6 +355,8 @@ No se incorpora Passport porque el guard necesario es pequeño, específico para
 - Registrar guards globales para seguridad por defecto y marcar health/auth públicos según contrato.
 - Incorporar Swagger para cookies y respuestas sin exponer secretos.
 - Mantener services sin `Repository<Entity>` directo.
+- Agregar un comando CLI controlado para crear únicamente el primer usuario,
+  reutilizando el hasher y el repository propio.
 
 ### 2.2 Frontend
 
@@ -374,22 +393,43 @@ No se incorpora Passport porque el guard necesario es pequeño, específico para
 ### 2.6 Testing
 
 - Unit: password hashing, login, credenciales inválidas, usuario inactivo, permisos acumulados y guard.
-- Integration API: login, cookies, me, refresh, logout, `401`, `403` y acceso permitido usando repositories de prueba.
-- Integration Oracle: migration/repositories/RBAC, condicionada a Oracle de testing disponible.
+- Integration HTTP in-memory: login, cookies, me, refresh, logout, `401`, `403` y acceso permitido usando repositories de prueba.
+- Persistencia Oracle real: migration, repositories, RBAC y sesiones, condicionada a Oracle de testing disponible.
+- Integration Auth HTTP + Oracle real: NestJS, Supertest, repositories TypeORM y Oracle reales para el flujo crítico completo.
 - Frontend: AuthService, login y guards/interceptor.
-- Playwright: flujo crítico de login/logout de UI con API controlada; full-stack si Oracle y backend pueden levantarse de forma reproducible.
+- Playwright con API mockeada: flujo crítico de login/logout de UI; no representa una validación full-stack.
 
 ### 2.7 Documentación
 
 - Actualizar `.env.example`, README cuando corresponda, `ARCHITECTURE.md` con las decisiones cerradas y `ROADMAP.md` con estado verificado.
 - Mantener TASKS según resultados reales.
+- Documentar que el bootstrap es un comando de instalación de una sola finalidad, sin endpoint, roles ni permisos.
+
+### 2.7.1 Docker Oracle
+
+El montaje actual en `/opt/oracle/scripts/startup` reaplica en cada arranque el
+`ALTER USER`, la cuota y los grants definidos por el script local. Esto puede
+recuperar el esquema de desarrollo cuando se reutiliza el volumen, pero no es
+un requisito propio de Auth/RBAC: afecta transversalmente a la infraestructura
+Oracle. KAN-10 no vuelve a modificar `docker-compose.yml`; se propone separar
+esa decisión en una card `chore` específica, sin crearla hasta recibir
+autorización.
+
+### 2.7.2 Configuración restaurada tras la revisión
+
+- Backend vuelve a TypeScript `5.9.3`; frontend conserva su TypeScript `6.0.3`.
+- Angular vuelve a usar su caché y prebundle predeterminados.
+- `health.e2e-spec.ts` vuelve a inicializar la aplicación sin un `listen()`
+  explícito; Supertest administra su listener efímero.
+- No se restaura `baseUrl` en el frontend porque su propio TypeScript 6 rechaza
+  esa opción deprecada; la ausencia no depende del upgrade backend revertido.
 
 ### 2.8 Riesgos
 
 - Oracle local puede no estar disponible o tardar en inicializar; los tests Oracle deben reportarse como bloqueados, no simularse.
 - La rotación concurrente de refresh puede producir un `401` para una segunda solicitud simultánea, comportamiento seguro y esperado.
 - La protección CSRF requiere mantener actualizada la lista explícita de orígenes confiables.
-- No existe todavía provisión funcional de usuarios; tests y futuras seeds técnicas no deben confundirse con reglas de negocio.
+- El bootstrap crea únicamente el primer usuario técnico; no debe confundirse con un ABM, un seed funcional ni una definición de roles.
 
 ## 3. TASKS
 
@@ -414,12 +454,21 @@ No se incorpora Passport porque el guard necesario es pequeño, específico para
 - [x] Ejecutar lint backend.
 - [x] Ejecutar backend build.
 - [x] Ejecutar frontend build.
-- [x] Ejecutar backend Unit Tests (6 archivos, 14 tests).
-- [x] Ejecutar backend Integration Tests (3 archivos, 8 tests; incluye Oracle).
-- [x] Ejecutar frontend Tests (4 archivos, 11 tests).
+- [x] Ejecutar backend Unit Tests (7 archivos, 19 tests).
+- [x] Ejecutar backend Integration Tests (4 archivos, 9 tests; incluye persistencia Oracle e HTTP + Oracle reales).
+- [x] Ejecutar frontend Tests (5 archivos, 14 tests).
 - [x] Ejecutar Playwright E2E (2 proyectos, 2 tests).
 - [x] Actualizar documentación y TASKS con resultados reales.
 - [x] Crear commits con `KAN-10`.
 - [x] Crear Pull Request `[KAN-10] Auth / RBAC` (#4).
 - [x] Verificar trazabilidad Jira Development: PR abierto detectado desde GitHub.
 - [x] No mergear sin autorización explícita.
+- [x] Implementar bootstrap CLI seguro e idempotente del primer usuario.
+- [x] Agregar Integration Auth HTTP + Oracle real.
+- [x] Probar replay de refresh e invalidación de access retenido.
+- [x] Agregar test directo de `permissionGuard` frontend.
+- [x] Rechazar secrets de ejemplo en producción.
+- [x] Revertir cambios globales no necesarios autorizados.
+- [x] Reclasificar y documentar la cobertura de tests.
+- [x] Ejecutar validación completa posterior a la revisión.
+- [x] Revisar `git status`, `git diff` y alcance antes de commit.

@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '../users/users.module.js';
 import { AuthController } from './auth.controller.js';
 import { AuthService } from './auth.service.js';
+import { BootstrapUserService } from './bootstrap-user.service.js';
 import { AUTH_SESSIONS_REPOSITORY } from './auth-sessions.repository.js';
 import { AuthSessionEntity } from './entities/auth-session.entity.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
@@ -23,6 +24,7 @@ import { PasswordHasherService } from './security/password-hasher.service.js';
   controllers: [AuthController],
   providers: [
     AuthService,
+    BootstrapUserService,
     AuthCookieService,
     AuthTokenService,
     PasswordHasherService,
@@ -40,6 +42,12 @@ import { PasswordHasherService } from './security/password-hasher.service.js';
       useClass: PermissionsGuard,
     },
   ],
-  exports: [AuthService, AuthTokenService, PasswordHasherService, JwtModule],
+  exports: [
+    AuthService,
+    AuthTokenService,
+    BootstrapUserService,
+    PasswordHasherService,
+    JwtModule,
+  ],
 })
 export class AuthModule {}

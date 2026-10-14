@@ -39,8 +39,8 @@ export function validateEnvironment(
     throw new Error('FRONTEND_ORIGIN must use HTTPS in production');
   }
 
-  validateSecret('JWT_ACCESS_SECRET', accessSecret);
-  validateSecret('JWT_REFRESH_SECRET', refreshSecret);
+  validateSecret('JWT_ACCESS_SECRET', accessSecret, nodeEnvironment);
+  validateSecret('JWT_REFRESH_SECRET', refreshSecret, nodeEnvironment);
 
   if (accessSecret === refreshSecret) {
     throw new Error('JWT access and refresh secrets must be different');
@@ -70,9 +70,20 @@ function validateOrigin(value: string): URL {
   return origin;
 }
 
-function validateSecret(name: string, value: string): void {
+function validateSecret(
+  name: string,
+  value: string,
+  nodeEnvironment: string,
+): void {
   if (value.length < 32) {
     throw new Error(`${name} must contain at least 32 characters`);
+  }
+
+  if (
+    nodeEnvironment === 'production' &&
+    /^change-me(?:-|$)/i.test(value.trim())
+  ) {
+    throw new Error(`${name} must not use an example value in production`);
   }
 }
 

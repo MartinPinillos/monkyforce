@@ -32,4 +32,21 @@ describe('validateEnvironment', () => {
       validateEnvironment({ ...validEnvironment, NODE_ENV: 'production' }),
     ).toThrow('must use HTTPS');
   });
+
+  it.each([
+    ['JWT_ACCESS_SECRET', 'change-me-access-secret-at-least-32-characters'],
+    ['JWT_REFRESH_SECRET', 'change-me-refresh-secret-at-least-32-characters'],
+  ])(
+    'rejects an example %s in production even when it is long enough',
+    (key, value) => {
+      expect(() =>
+        validateEnvironment({
+          ...validEnvironment,
+          NODE_ENV: 'production',
+          FRONTEND_ORIGIN: 'https://monkyforce.example',
+          [key]: value,
+        }),
+      ).toThrow(`${key} must not use an example value in production`);
+    },
+  );
 });
