@@ -1,0 +1,28 @@
+services:
+  oracle:
+    image: ${ORACLE_IMAGE}
+    container_name: monkyforce-oracle
+    restart: unless-stopped
+
+    ports:
+      - '127.0.0.1:1521:1521'
+
+    environment:
+      ORACLE_PWD: ${ORACLE_PWD}
+      ORACLE_CHARACTERSET: AL32UTF8
+      APP_DB_USERNAME: ${APP_DB_USERNAME}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
+
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./docker:/opt/oracle/scripts/startup:ro
+
+    healthcheck:
+      test: ['CMD', '/opt/oracle/checkDBStatus.sh']
+      interval: 30s
+      timeout: 30s
+      retries: 10
+      start_period: 5m
+
+volumes:
+  oracle-data:
