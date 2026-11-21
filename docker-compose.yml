@@ -1,6 +1,6 @@
 services:
   oracle:
-    image: ${ORACLE_IMAGE}
+    image: ${ORACLE_IMAGE:?Configurar ORACLE_IMAGE en .env}
     container_name: monkyforce-oracle
     restart: unless-stopped
 
@@ -8,10 +8,10 @@ services:
       - '127.0.0.1:1521:1521'
 
     environment:
-      ORACLE_PWD: ${ORACLE_PWD}
+      ORACLE_PWD: ${ORACLE_PWD:?Configurar ORACLE_PWD en .env}
       ORACLE_CHARACTERSET: AL32UTF8
-      APP_DB_USERNAME: ${APP_DB_USERNAME}
-      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
+      APP_DB_USERNAME: ${APP_DB_USERNAME:?Configurar APP_DB_USERNAME en .env}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?Configurar APP_DB_PASSWORD en .env}
 
     volumes:
       - oracle-data:/opt/oracle/oradata
