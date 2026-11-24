@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createHash, randomUUID } from 'node:crypto';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { normalizeLoginName, verifyPassword } from '../users/user-password';
 import { User } from '../users/user.entity';
 import { AuthSession } from './auth-session.entity';
@@ -50,5 +50,19 @@ export class AuthService {
     });
 
     return pair;
+  }
+
+  async logout(accessToken?: string, refreshToken?: string): Promise<void> {
+    const payload =
+      (await this.tokens.readLogoutToken(refreshToken, 'refresh')) ??
+      (await this.tokens.readLogoutToken(accessToken, 'access'));
+    if (!payload) {
+      return;
+    }
+
+    await this.sessions.update(
+      { id: payload.sid, userId: Number(payload.sub), revokedAt: IsNull() },
+      { revokedAt: new Date() },
+    );
   }
 }
