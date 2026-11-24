@@ -1,6 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { randomUUID } from 'node:crypto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { createHash, randomUUID } from 'node:crypto';
+import { IsNull, MoreThan, Repository } from 'typeorm';
+import { AuthSession } from './auth-session.entity';
 import { AuthConfig } from './auth.config';
 
 type TokenType = 'access' | 'refresh';
@@ -29,6 +32,8 @@ export class AuthTokenService {
   constructor(
     private readonly jwt: JwtService,
     private readonly config: AuthConfig,
+    @InjectRepository(AuthSession)
+    private readonly sessions: Repository<AuthSession>,
   ) {}
 
   async issuePair(userId: number, sessionId: string): Promise<AuthTokenPair> {
@@ -67,16 +72,58 @@ export class AuthTokenService {
   }
 
   verifyAccessToken(token: string): Promise<AuthTokenPayload> {
-    return this.verify(token, 'access');
+    return this.verifySession(token, 'access');
   }
 
   verifyRefreshToken(token: string): Promise<AuthTokenPayload> {
-    return this.verify(token, 'refresh');
+    return this.verifySession(token, 'refresh');
+  }
+
+  async readLogoutToken(
+    token: string | undefined,
+    type: TokenType,
+  ): Promise<AuthTokenPayload | null> {
+    if (!token) {
+      return null;
+    }
+
+    try {
+      return await this.verify(token, type, true);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  private async verifySession(
+    token: string,
+    type: TokenType,
+  ): Promise<AuthTokenPayload> {
+    const payload = await this.verify(token, type);
+    const session = await this.sessions.findOneBy({
+      id: payload.sid,
+      userId: Number(payload.sub),
+      revokedAt: IsNull(),
+      expiresAt: MoreThan(new Date()),
+    });
+    if (
+      !session ||
+      (type === 'refresh' &&
+        session.refreshTokenHash !==
+          createHash('sha256').update(token).digest('hex'))
+    ) {
+      throw new UnauthorizedException();
+    }
+
+    return payload;
   }
 
   private async verify(
     token: string,
     type: TokenType,
+    ignoreExpiration = false,
   ): Promise<AuthTokenPayload> {
     let payload: Partial<AuthTokenPayload>;
     try {
@@ -84,6 +131,7 @@ export class AuthTokenService {
         ...JWT_SCOPE,
         algorithms: [JWT_ALGORITHM],
         secret: this.config.secret,
+        ignoreExpiration,
       });
     } catch {
       throw new UnauthorizedException();
